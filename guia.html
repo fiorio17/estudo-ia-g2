@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Guia de revisao do G2 de Inteligencia Artificial: algoritmos geneticos, PLN, Transformers, visao computacional e engenharia de prompts.">
+  <title>Guia de revisão — IA G2</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🧠%3C/text%3E%3C/svg%3E">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html{-webkit-text-size-adjust:100%;}
+    body{margin:0;}
+    img,svg,video{max-width:100%;height:auto;}
+    button,input,select,textarea{font:inherit;color:inherit;}
+    table{border-collapse:collapse;}
+  </style>
+</head>
+<body>
+<style>
+:root{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --amber:#A65A0B; --amber-soft:#F7E6D2;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+  --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+    --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+    --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+    --amber:#E7A45C; --amber-soft:#3A2A18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+  --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+  --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+  --amber:#E7A45C; --amber-soft:#3A2A18;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+:root[data-theme="light"]{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --amber:#A65A0B; --amber-soft:#F7E6D2;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:16.5px; line-height:1.62;
+  background-image:
+    repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:1180px; margin:0 auto; padding:0 20px 96px;}
+
+.masthead{padding:56px 0 28px; border-bottom:2px solid var(--ink); margin-bottom:34px;}
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft); margin:0 0 14px;}
+h1{font-family:var(--display); font-weight:700; font-size:clamp(2.3rem,6vw,3.6rem);
+  line-height:1.04; letter-spacing:-.02em; margin:0 0 16px; text-wrap:balance;}
+h1 em{font-style:italic; color:var(--accent);}
+.lede{font-size:1.1rem; color:var(--ink-soft); max-width:60ch; margin:0;}
+
+.priority{display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  margin:30px 0 0; padding:0; list-style:none;}
+.priority li{background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  padding:14px 16px; box-shadow:var(--shadow);}
+.priority b{display:block; font-family:var(--mono); font-size:.7rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:5px;}
+.priority span{font-size:.93rem; color:var(--ink-soft); line-height:1.5;}
+
+.shell{display:grid; grid-template-columns:210px minmax(0,1fr); gap:46px; align-items:start;}
+@media (max-width:900px){ .shell{grid-template-columns:1fr; gap:0;} nav.rail{display:none;} }
+
+nav.rail{position:sticky; top:24px; font-size:.87rem;}
+nav.rail p{font-family:var(--mono); font-size:.68rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--ink-soft); margin:0 0 10px;}
+nav.rail a{display:block; padding:5px 0 5px 12px; color:var(--ink-soft); text-decoration:none;
+  border-left:2px solid var(--line); transition:color .15s, border-color .15s;}
+nav.rail a:hover, nav.rail a:focus-visible{color:var(--accent); border-left-color:var(--accent);}
+nav.rail hr{border:0; border-top:1px solid var(--line); margin:12px 0;}
+
+main{min-width:0;}
+section{margin:0 0 60px; scroll-margin-top:24px;}
+.prose{max-width:68ch;}
+
+h2{font-family:var(--display); font-size:clamp(1.55rem,3.3vw,2.05rem); line-height:1.15;
+  letter-spacing:-.015em; margin:0 0 6px; text-wrap:balance;}
+h2 .num{font-family:var(--mono); font-size:.8rem; color:var(--accent); letter-spacing:.1em;
+  display:block; margin-bottom:8px; font-weight:400;}
+h3{font-family:var(--display); font-size:1.22rem; margin:34px 0 8px; letter-spacing:-.01em;}
+h4{font-size:.98rem; margin:22px 0 6px; letter-spacing:.005em;}
+p{margin:0 0 14px;}
+a{color:var(--accent);}
+ul,ol{margin:0 0 14px; padding-left:22px;}
+li{margin-bottom:7px;}
+strong{font-weight:650;}
+code{font-family:var(--mono); font-size:.87em; background:var(--surface-2); padding:.12em .36em; border-radius:2px;}
+
+.callout{background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  padding:16px 18px; margin:22px 0; box-shadow:var(--shadow);}
+.callout p:last-child{margin-bottom:0;}
+.callout .tag{font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:7px;}
+.callout.warn .tag{color:var(--amber);}
+
+.formula{font-family:var(--mono); font-size:1.02rem; background:var(--surface); border:1px solid var(--line);
+  padding:14px 18px; border-radius:3px; margin:16px 0; overflow-x:auto; white-space:nowrap;}
+
+.scroller{overflow-x:auto; margin:18px 0; border:1px solid var(--line); border-radius:3px; background:var(--surface);}
+table{border-collapse:collapse; width:100%; font-size:.91rem; min-width:480px;}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+thead th{font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-soft); background:var(--surface-2); white-space:nowrap;}
+tbody tr:last-child td{border-bottom:0;}
+td.num, th.num{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+
+pre{font-family:var(--mono); font-size:.83rem; line-height:1.6; background:var(--surface);
+  border:1px solid var(--line); border-radius:3px; padding:16px 18px; overflow-x:auto; margin:16px 0;
+  box-shadow:var(--shadow);}
+pre b{color:var(--accent); font-weight:600;}
+pre i{color:var(--ink-soft); font-style:normal;}
+
+.chain{font-family:var(--mono); font-size:.95rem; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:3px; padding:10px 14px; margin:10px 0; display:inline-block;}
+.chain b{color:var(--accent);}
+
+.cards{display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); margin-top:20px;}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:3px; padding:0;
+  box-shadow:var(--shadow); overflow:hidden;}
+.card button{width:100%; text-align:left; background:none; border:0; padding:14px 16px; color:var(--ink);
+  font-size:.95rem; font-weight:600; line-height:1.45; display:flex; gap:10px; align-items:flex-start; cursor:pointer;}
+.card button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+.card button::before{content:"?"; font-family:var(--mono); color:var(--accent); font-weight:700; flex:none;}
+.card .ans{padding:0 16px 15px 32px; font-size:.9rem; color:var(--ink-soft); display:none;}
+.card.open .ans{display:block;}
+.card .ans code{font-size:.85em;}
+
+footer{margin-top:60px; padding-top:22px; border-top:1px solid var(--line); font-size:.85rem; color:var(--ink-soft);}
+footer a{color:var(--accent);}
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Revisão do G2 · Inteligência Artificial</p>
+  <h1>Seis aulas, <em>um guia</em>.</h1>
+  <p class="lede">Algoritmos genéticos, processamento de linguagem natural (do Bag of Words aos Transformers), visão computacional e engenharia de prompts — condensados a partir dos decks da disciplina, com as contas feitas passo a passo.</p>
+
+  <ul class="priority">
+    <li><b>Algoritmos genéticos</b><span>Fitness, seleção, crossover (PMX/OX), mutação, TSP e substituição.</span></li>
+    <li><b>PLN</b><span>Pipeline, BoW, TF-IDF, embeddings, cosseno, Word2Vec, atenção, Transformers, LLMs e RAG.</span></li>
+    <li><b>Visão computacional</b><span>Pixels, OpenCV, Canny, HSV, máscaras, CNNs, YOLO e MediaPipe.</span></li>
+    <li><b>Prompts</b><span>Papel, contexto, tarefa, restrições, formato; zero-shot, few-shot, CoT, role e structured.</span></li>
+  </ul>
+</header>
+
+<div class="shell">
+
+<nav class="rail" aria-label="Sumário">
+  <p>Sumário</p>
+  <a href="#ag-ideia">AG · a ideia</a>
+  <a href="#ag-conceitos">AG · conceitos e fitness</a>
+  <a href="#ag-simulacao">AG · simulação manual</a>
+  <a href="#ag-grafo">AG · no grafo</a>
+  <a href="#ag-tsp">AG · caixeiro viajante</a>
+  <a href="#ag-operadores">AG · seleção, cruzamento, mutação</a>
+  <hr>
+  <a href="#pln-intro">PLN · o que é</a>
+  <a href="#pln-pipeline">PLN · pipeline</a>
+  <a href="#pln-pre">PLN · pré-processamento</a>
+  <a href="#pln-num">PLN · BoW, TF-IDF, embeddings</a>
+  <a href="#pln-emb">PLN II · embeddings e cosseno</a>
+  <a href="#pln-tf">PLN II · Transformers e atenção</a>
+  <a href="#pln-llm">PLN II · LLMs e RAG</a>
+  <hr>
+  <a href="#vc-intro">Visão · fundamentos</a>
+  <a href="#vc-opencv">Visão · imagem e OpenCV</a>
+  <a href="#vc-canny">Visão · bordas e Canny</a>
+  <a href="#vc-cor">Visão · HSV e segmentação</a>
+  <a href="#vc-jogo">Visão · o jogo da webcam</a>
+  <a href="#vc-cnn">Visão · CNN, YOLO, MediaPipe</a>
+  <hr>
+  <a href="#prompts">Engenharia de prompts</a>
+  <hr>
+  <a href="#autoteste">Autoteste</a>
+</nav>
+
+<main>
+
+<!-- ============================ ALGORITMOS GENÉTICOS ============================ -->
+<section id="ag-ideia">
+  <h2><span class="num">AULA 11 · ALGORITMOS GENÉTICOS</span>A ideia: seleção natural</h2>
+  <div class="prose">
+    <p>Imagine uma população de coelhos em que cada um tem uma velocidade diferente (5, 8, 12, 15). Quem corre mais tem maior chance de sobreviver e se reproduzir. Depois de várias gerações, <strong>características que favorecem a sobrevivência tendem a se tornar mais frequentes</strong>.</p>
+    <p>Um <strong>Algoritmo Genético (AG)</strong> copia esse processo: trabalha com uma <em>população de soluções possíveis</em>; as mais aptas têm maior chance de serem selecionadas e, a cada geração, obtemos soluções melhores.</p>
+    <div class="chain">problema → <b>população</b> → avaliação → seleção → reprodução → mutação → <b>nova população</b> → …</div>
+    <div class="callout warn"><span class="tag">Cuidado</span><p>Os AGs são <strong>inspirados</strong> na biologia, mas não a simulam fielmente.</p></div>
+  </div>
+</section>
+
+<section id="ag-conceitos">
+  <h2>Conceitos e função de fitness</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Biologia</th><th>Algoritmo genético</th></tr></thead>
+    <tbody>
+      <tr><td>Indivíduo</td><td>Solução</td></tr>
+      <tr><td>População</td><td>Conjunto de soluções</td></tr>
+      <tr><td>Gene</td><td>Parte da solução</td></tr>
+      <tr><td>Cromossomo</td><td>A solução codificada (ex.: sequência de bits, ordem das cidades)</td></tr>
+      <tr><td>Reprodução</td><td>Geração de novos indivíduos</td></tr>
+      <tr><td>Crossover</td><td>Combinação de soluções</td></tr>
+      <tr><td>Mutação</td><td>Pequena alteração aleatória</td></tr>
+      <tr><td>Seleção natural</td><td>Seleção das soluções</td></tr>
+      <tr><td>Fitness</td><td>Função de aptidão</td></tr>
+      <tr><td>Geração</td><td>Uma iteração do algoritmo</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Fitness</h3>
+    <p>É a função que diz <strong>o quão boa é uma solução</strong>. Para <em>maximizar</em> x²: x=1→1, 2→4, 5→25, 10→100. Para <em>minimizar</em> (como a distância no TSP), inverte-se: <code>fitness = 1/distância</code>.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th class="num">distância</th><th class="num">fitness = 1/d</th></tr></thead>
+    <tbody>
+      <tr><td class="num">100</td><td class="num">0,010</td></tr>
+      <tr><td class="num">50</td><td class="num">0,020</td></tr>
+      <tr><td class="num">20</td><td class="num">0,050</td></tr>
+      <tr><td class="num">10</td><td class="num">0,100</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><span class="tag">Frase de prova</span><p>Fitness <strong>não é necessariamente a resposta</strong> do problema; é uma forma de medir a qualidade da solução.</p></div>
+</section>
+
+<section id="ag-simulacao">
+  <h2>Simulação manual (x², 4 bits)</h2>
+  <div class="prose">
+    <p>Cada indivíduo é um número de 0 a 15 em 4 bits. Objetivo: maximizar <code>fitness = x²</code>.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Indivíduo (bin)</th><th class="num">dec</th><th class="num">fitness = x²</th></tr></thead>
+    <tbody>
+      <tr><td class="num">0011</td><td class="num">3</td><td class="num">9</td></tr>
+      <tr><td class="num">1010</td><td class="num">10</td><td class="num">100</td></tr>
+      <tr><td class="num">1111</td><td class="num">15</td><td class="num">225</td></tr>
+      <tr><td class="num">0101</td><td class="num">5</td><td class="num">25</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>1. Seleção</h3>
+    <p>Os melhores têm maior chance de reproduzir. Pode ser por <strong>roleta</strong> (probabilidade proporcional ao fitness), <strong>ranking</strong>, <strong>elitismo</strong> ou <strong>torneio</strong>.</p>
+    <h3>2. Crossover</h3>
+    <p>Escolhido um ponto de corte, trocam-se as caudas:</p>
+<pre>Pai 1:  <b>101</b> | 0        Filho 1:  <b>101</b> | 1  = 1011
+Pai 2:  111 | <b>1</b>        Filho 2:  111 | <b>0</b>  = 1110</pre>
+    <p>Por que não escolher só um pai? Porque o objetivo é <strong>combinar características</strong> das soluções existentes.</p>
+    <h3>3. Mutação</h3>
+    <p>O crossover gera filhos parecidos; a mutação (a uma <em>taxa</em> escolhida, com aleatoriedade) introduz <strong>diversidade</strong>: Filho 2 = 1110 → 1111. <strong>Mas</strong> mutação alta demais destrói boas características dos pais.</p>
+    <h3>4. Repetir até parar</h3>
+    <p>Condições de parada: um número específico de gerações, <em>ou</em> o fitness se mantém estável nas últimas gerações.</p>
+    <div class="callout"><span class="tag">Experimente</span><p>No <a href="laboratorio.html">laboratório</a> há um AG de verdade rodando esse exemplo, com sliders de taxa de mutação e tamanho da população.</p></div>
+  </div>
+</section>
+
+<section id="ag-grafo">
+  <h2>O mesmo AG, agora num grafo (A → G)</h2>
+  <div class="prose">
+    <p>Sete passos do exemplo dos slides:</p>
+    <ol>
+      <li><strong>Codificação</strong>: cada caminho válido de A a G é um indivíduo.</li>
+      <li><strong>População inicial</strong>: [A,C,E,G] (3 saltos), [A,B,C,D,G] (4), [A,B,D,E,G] (4), [A,C,D,B,D,G] (5 — com loop ineficiente).</li>
+      <li><strong>Fitness</strong> = 1/saltos.</li>
+      <li><strong>Seleção</strong> de dois pais.</li>
+      <li><strong>Crossover</strong>.</li>
+      <li><strong>Mutação</strong>.</li>
+      <li><strong>Nova geração</strong>: filhos + melhores da geração anterior.</li>
+    </ol>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Caminho</th><th class="num">Saltos</th><th class="num">Fitness</th></tr></thead>
+    <tbody>
+      <tr><td>[A, C, E, G]</td><td class="num">3</td><td class="num">≈ 0,333 (mais apto)</td></tr>
+      <tr><td>[A, B, C, D, G]</td><td class="num">4</td><td class="num">0,25</td></tr>
+      <tr><td>[A, B, D, E, G]</td><td class="num">4</td><td class="num">0,25</td></tr>
+      <tr><td>[A, C, B, D, E, G]</td><td class="num">5</td><td class="num">0,2 (menos apto)</td></tr>
+    </tbody>
+  </table></div>
+<pre>Pai 1:  A, C    | E, G
+Pai 2:  A, B, C | D, G
+Filho 1 (início do Pai 2 + fim do Pai 1):  [A, B, C, E, G]  (3 saltos)
+Filho 2 (início do Pai 1 + fim do Pai 2):  [A, C, D, G]     (4 saltos)
+
+Mutação no Filho 2 (nó C):  [A, C, D, G]  →  [A, B, D, G]
+   (B conecta com D e D com G, então a rota é refeita)</pre>
+  <div class="callout"><span class="tag">Para evitar estagnação</span><p>A mutação altera um gene aleatoriamente. Nova população = novos filhos + os melhores da geração anterior.</p></div>
+</section>
+
+<section id="ag-tsp">
+  <h2>O Problema do Caixeiro Viajante (TSP)</h2>
+  <div class="prose">
+    <p>Sair de uma cidade, visitar todas as outras <strong>uma única vez</strong>, voltar à inicial e percorrer a <strong>menor distância</strong>. É um problema <strong>NP-difícil</strong>: não existe algoritmo eficiente que o resolva de forma ótima em instâncias grandes.</p>
+    <p>Com 4 cidades (A fixa), as 6 rotas são A→C→D→B→A (156), A→C→B→D→A (131), A→B→C→D→A (<strong>125</strong>), A→B→D→C→A (156), A→D→C→B→A (<strong>125</strong>), A→D→B→C→A (131). Melhor: 125 (ida e volta do mesmo ciclo).</p>
+  </div>
+  <div class="formula">nº de rotas = (n − 1)!</div>
+  <div class="scroller"><table>
+    <thead><tr><th class="num">n cidades</th><th class="num">(n−1)!</th><th>Tempo de força bruta</th></tr></thead>
+    <tbody>
+      <tr><td class="num">5</td><td class="num">24</td><td>insignificante (250 mi rotas/s)</td></tr>
+      <tr><td class="num">10</td><td class="num">362.880</td><td>0,003 s</td></tr>
+      <tr><td class="num">15</td><td class="num">87 bilhões</td><td>≈ 20 min</td></tr>
+      <tr><td class="num">20</td><td class="num">1,2 × 10¹⁷</td><td>≈ 73 anos</td></tr>
+      <tr><td class="num">25</td><td class="num">6,2 × 10²³</td><td>≈ 470 milhões de anos</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>Até ~10–12 cidades a força bruta ainda serve; com 50, 100, 1000 é impossível. Daí os AGs.</p>
+    <div class="scroller"><table>
+      <thead><tr><th>Força bruta</th><th>Algoritmo genético</th></tr></thead>
+      <tbody><tr><td>Garante a solução <strong>ótima</strong>, se conseguir terminar.</td><td>Procura uma solução <strong>muito boa</strong>, mas <strong>não garante</strong> a ótima.</td></tr></tbody>
+    </table></div>
+    <h3>Mapeamento no TSP</h3>
+    <div class="scroller"><table>
+      <thead><tr><th>Conceito</th><th>No TSP</th></tr></thead>
+      <tbody>
+        <tr><td>Indivíduo</td><td>Uma rota</td></tr>
+        <tr><td>População</td><td>Conjunto de rotas</td></tr>
+        <tr><td>Cromossomo</td><td>Ordem das cidades</td></tr>
+        <tr><td>Gene</td><td>Uma cidade</td></tr>
+        <tr><td>Fitness</td><td>Qualidade da rota (1/distância)</td></tr>
+        <tr><td>Crossover</td><td>Combinação de rotas (PMX/OX — sem repetir cidades)</td></tr>
+        <tr><td>Mutação</td><td>Alteração da ordem das cidades</td></tr>
+        <tr><td>Objetivo</td><td>Minimizar a distância</td></tr>
+      </tbody>
+    </table></div>
+    <p>Exemplo dos slides: população de 4 rotas (distâncias 70, 106, 81, 95 → fitness 0,014; 0,009; 0,012; 0,010). A rota 1 (70) tem o melhor fitness. A nova geração tem o mesmo tamanho da original; parada após n gerações ou fitness sem melhorar.</p>
+  </div>
+</section>
+
+<section id="ag-operadores">
+  <h2>Estratégias: seleção, cruzamento, mutação, substituição</h2>
+  <h3>Seleção</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Estratégia</th><th>Como funciona</th><th>Característica</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Roleta</strong></td><td>Probabilidade proporcional ao fitness</td><td>Favorece os melhores, mas mantém diversidade</td></tr>
+      <tr><td><strong>Torneio</strong></td><td>Sorteia alguns e escolhe o melhor deles</td><td>Simples; controla a pressão seletiva</td></tr>
+      <tr><td><strong>Ranking</strong></td><td>Ordena por fitness; seleção depende da posição</td><td>Reduz a influência de valores extremos</td></tr>
+      <tr><td><strong>Elitismo</strong></td><td>Melhores passam direto para a próxima geração</td><td>Garante que boas soluções não se percam</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Cruzamento</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Estratégia</th><th>Ideia</th><th>TSP?</th></tr></thead>
+    <tbody>
+      <tr><td>Um ponto</td><td>Divide os pais e combina partes</td><td>⚠ problemático (repete/omite cidades)</td></tr>
+      <tr><td><strong>PMX</strong></td><td>Mantém posições e corrige duplicações por mapeamento</td><td>✓ muito usado</td></tr>
+      <tr><td><strong>OX</strong></td><td>Preserva a ordem relativa das cidades</td><td>✓ excelente</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h4>PMX — passo a passo</h4>
+<pre>P1: [1,2,3 | <b>4,5,6,7</b> | 8,9]
+P2: [9,3,7 | 8,2,6,5 | 1,4]
+
+F1 parcial: [x,x,x | <b>4,5,6,7</b> | x,x]
+Mapeamento (P1↔P2 no trecho):  4↔8,  5↔2,  6↔6 (ignora),  7↔5
+Posições de fora vêm de P2; se a cidade já está no trecho, segue o mapeamento:
+   9 ok, 3 ok, 7 → 5 (já existe) → 2,   1 ok,  4 → 8
+F1: <b>[9,3,2 | 4,5,6,7 | 1,8]</b></pre>
+    <h4>OX — passo a passo</h4>
+<pre>P1: [1,2,3 | <b>4,5,6,7</b> | 8,9]
+P2: [9,3,7 | 8,2,6,5 | 1,4]
+
+1) Copia o trecho de P1:        [x,x,x | 4,5,6,7 | x,x]
+2) Lista P2 a partir do 2º corte: 1,4,9,3,7,8,2,6,5
+3) Remove o que já está no filho:        1, 9, 3, 8, 2
+4) Preenche a partir do 2º corte (dá a volta):
+   [ 3, 8, 2 | 4,5,6,7 | 1, 9 ]   ← F1 = <b>[3,8,2 | 4,5,6,7 | 1,9]</b></pre>
+    <p>O filho 2 é construído simetricamente: PMX → [1,7,3 | 8,2,6,5 | 4,9]; OX → [3,4,7 | 8,2,6,5 | 9,1].</p>
+    <div class="callout"><span class="tag">Macete</span><p><strong>OX = Order</strong> (preserva ordem, preenche pela lista de P2 começando no 2º corte). <strong>PMX = Partially Mapped</strong> (resolve duplicatas por mapeamento entre os trechos). Teste os dois com suas próprias entradas no <a href="laboratorio.html">laboratório</a>.</p></div>
+  </div>
+
+  <h3>Mutação</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Tipo</th><th>Exemplo</th><th>Característica</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Swap</strong> (troca)</td><td>A B C D E F G → A <b>F</b> C D E <b>B</b> G</td><td>Menos destrutiva; ideal para ajuste fino</td></tr>
+      <tr><td><strong>Insertion</strong> (inserção)</td><td>A B C D E F G → A C D E F <b>B</b> G</td><td>Perturbação moderada; útil em escalonamento</td></tr>
+      <tr><td><strong>Inversion</strong> (inversão)</td><td>A B C D E F G → A <b>F E D C B</b> G</td><td>Mais eficaz no TSP: desfaz rotas que se cruzam (princípio do 2-opt)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Substituição</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Estratégia</th><th>Como funciona</th><th>Característica</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Geracional</strong></td><td>Toda a população é substituída pelos filhos</td><td>Simples e muito usada</td></tr>
+      <tr><td><strong>Geracional + elitismo</strong></td><td>Nova geração substitui a antiga, mas o topo (1–5%) é copiado intacto</td><td>Evita perder boas soluções</td></tr>
+      <tr><td><strong>Steady-state</strong></td><td>Só alguns são trocados por geração (ex.: 2 filhos substituem os 2 piores)</td><td>Maior continuidade</td></tr>
+      <tr><td><strong>Substituição dos piores</strong></td><td>Novos indivíduos entram no lugar dos de menor fitness</td><td>Favorece a permanência dos melhores</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================ PLN I ============================ -->
+<section id="pln-intro">
+  <h2><span class="num">AULA 12 · INTRODUÇÃO A PLN</span>O que é PLN e por que é difícil</h2>
+  <div class="prose">
+    <p><strong>PLN</strong> é a área da IA que permite aos computadores <em>processar, analisar, interpretar e gerar</em> linguagem humana (texto ou fala). Tarefas: detectar spam, resumir documentos, gerar respostas.</p>
+    <p>Computadores gostam de dados estruturados; a linguagem humana traz:</p>
+    <ul>
+      <li><strong>Ambiguidade</strong>: “banco” (instituição ou assento) — o sentido depende do contexto.</li>
+      <li><strong>Ironia e sarcasmo</strong>: “Nossa, que ótimo! Perdi todos os meus arquivos.” — palavras positivas, intenção negativa.</li>
+      <li><strong>Variações</strong>: abreviações, gírias, erros, emojis (“Blz, vlw! Kkk 😅”).</li>
+    </ul>
+    <h3>Aplicações</h3>
+    <ul>
+      <li><strong>Tradução automática</strong> (Google Tradutor)</li>
+      <li><strong>Chatbots e assistentes virtuais</strong></li>
+      <li><strong>Análise de sentimentos</strong> (positivo/negativo/neutro)</li>
+      <li><strong>Detecção de spam</strong></li>
+    </ul>
+    <h3>LLMs × PLN tradicional</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>LLMs</th><th>PLN tradicional</th></tr></thead>
+    <tbody><tr>
+      <td>Grandes modelos de linguagem, geralmente <strong>Transformers</strong>. Realizam várias tarefas a partir de instruções em linguagem natural.</td>
+      <td>Regras, características extraídas e modelos especializados. Pode exigir <strong>treinamento específico por tarefa</strong> (ex.: classificador de spam com e-mails rotulados).</td>
+    </tr></tbody>
+  </table></div>
+</section>
+
+<section id="pln-pipeline">
+  <h2>O pipeline de PLN</h2>
+  <div class="prose">
+    <div class="chain">1 <b>Texto</b> → 2 <b>Limpeza</b> → 3 <b>Tokenização</b> → 4 <b>Representação numérica</b> → 5 <b>Modelo</b></div>
+<pre>1. Entrada:          "Eu adorei esse filme! Foi muito bom."
+2. Pré-processamento: "eu adorei esse filme foi muito bom"
+3. Tokens:           [eu, adorei, esse, filme, foi, muito, bom]
+4. Numérica (BoW):   vocabulário [adorei, filme, ruim] → "eu adorei esse filme" = [1, 1, 0]
+5. Modelo:           classificador → sentimento positivo</pre>
+    <p>Tokens modernos nem sempre são palavras inteiras (podem ser pedaços de palavra, pontuação etc.).</p>
+  </div>
+</section>
+
+<section id="pln-pre">
+  <h2>Pré-processamento: stopwords, stemming, lematização</h2>
+  <div class="prose">
+    <h3>Stopwords</h3>
+    <p>Palavras muito frequentes que, em certas tarefas, contribuem pouco: artigos (o, a, um), preposições (de, em, para), conjunções (e, ou, mas), pronomes (ele, ela, nós).</p>
+    <div class="callout warn"><span class="tag">Atenção</span><p>“Eu gostei do filme” × “Eu <strong>não</strong> gostei do filme”. Remover o “não” inverte o sentido. Emojis, pontuação e maiúsculas também podem carregar sentimento. <strong>A remoção deve considerar o contexto.</strong></p></div>
+    <h3>Stemming</h3>
+    <p>Corta prefixos/sufixos por regras. estudando → <code>estud</code>; estudaram → <code>estud</code>; estudante → <code>estud</code>. <strong>Vantagem</strong>: simples e rápido. <strong>Limitação</strong>: o stem pode não ser uma palavra real e pode juntar palavras de sentidos diferentes.</p>
+    <h3>Lematização</h3>
+    <p>Devolve o <strong>lema</strong> (forma canônica): gatos → gato; estudando/estudou → estudar; melhores → bom. “são” → <em>ser</em> ou <em>são</em>, conforme o contexto (“Ele foi à escola”: ir; “Ele foi um bom aluno”: ser). Exige mais recursos linguísticos, mas é mais interpretável.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Aplicação</th><th>Possível escolha</th></tr></thead>
+    <tbody>
+      <tr><td>Busca simples por palavras relacionadas</td><td>Stemming ou lematização</td></tr>
+      <tr><td>Classificação de documentos</td><td>Avaliar se stopwords ajudam ou prejudicam</td></tr>
+      <tr><td>Análise de sentimentos</td><td>Cuidado com “não” e “nunca”</td></tr>
+      <tr><td>Análise linguística</td><td>Lematização + análise gramatical</td></tr>
+      <tr><td>Transformers</td><td>Tokenizadores próprios; geralmente sem essas etapas</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose"><p>Combinações: stopwords+stemming e stopwords+lematização fazem sentido; stemming+lematização é geralmente <em>redundante</em>.</p></div>
+</section>
+
+<section id="pln-num">
+  <h2>Numerização: BoW, TF-IDF e embeddings</h2>
+  <div class="prose">
+    <h3>Bag of Words (BoW)</h3>
+    <p>Cria um vocabulário e conta quantas vezes cada palavra aparece em cada texto.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Texto</th><th class="num">gosto</th><th class="num">de</th><th class="num">Python</th><th class="num">Java</th></tr></thead>
+    <tbody>
+      <tr><td>gosto de Python</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">0</td></tr>
+      <tr><td>gosto de Java</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p><strong>Vantagens</strong>: simples; boa representação inicial para classificação. <strong>Limitação</strong>: ignora a ordem — “Python é melhor que Java” e “Java é melhor que Python” podem dar o mesmo vetor.</p>
+
+    <h3>TF-IDF</h3>
+  </div>
+  <div class="formula">TF-IDF(t, d) = TF(t, d) × IDF(t)</div>
+  <div class="prose">
+    <ul>
+      <li><strong>TF</strong> (frequência do termo): quanto o termo aparece <em>no documento</em>. Nos slides: TF = ocorrências ÷ total de palavras.</li>
+      <li><strong>IDF</strong> (frequência inversa): raridade no corpus. Termo em todos os documentos → IDF ≈ 0. Nos slides: IDF = log₁₀(N ÷ docs que contêm o termo).</li>
+    </ul>
+    <p>Exemplo: Doc 1 = “A inteligência artificial aprende.” (4 palavras); Doc 2 = “O menino aprende a ler.” (5 palavras); N = 2.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Palavra</th><th>TF (Doc 1)</th><th>IDF</th><th>TF-IDF</th></tr></thead>
+    <tbody>
+      <tr><td>aprende</td><td class="num">1/4 = 0,25</td><td class="num">log₁₀(2/2) = 0</td><td class="num"><strong>0</strong></td></tr>
+      <tr><td>inteligência</td><td class="num">1/4 = 0,25</td><td class="num">log₁₀(2/1) = 0,301</td><td class="num"><strong>0,075</strong></td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>“Aprende” está em todos os docs (não diferencia) → zero. “Inteligência” é frequente no Doc 1 e rara no corpus → palavra-chave. <strong>Palavra rara não é necessariamente importante</strong>: o peso depende da frequência <em>e</em> da distribuição.</p>
+    <p><strong>Limitação</strong>: não entende significado nem relações semânticas.</p>
+
+    <h3>Embeddings</h3>
+    <p>Representam palavras/trechos/textos como <strong>vetores</strong> que capturam significado e contexto. gato e cachorro ficam próximos; rei e rainha têm relação parecida com homem e mulher. Ideia de “GPS dos significados”: palavras de sentido parecido ficam vizinhas no mapa.</p>
+    <p>Mapa didático de 2 eixos (X: animal 0 → máquina 10; Y: terrestre 0 → voador 10): Cachorro [1,1], Pássaro [1,9], Carro [9,1], Avião [9,9]. <em>Embeddings reais não têm dimensões interpretáveis assim.</em></p>
+    <p>Exemplo clássico: buscar “como limpar o sofá” e achar “Técnicas de higienização de estofados” — nenhuma palavra em comum, mas os vetores estão próximos.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Aplicação</th><th>BoW</th><th>TF-IDF</th><th>Embeddings</th></tr></thead>
+    <tbody>
+      <tr><td>Classificação de spam</td><td>Sim</td><td>Sim, muito útil</td><td>Sim</td></tr>
+      <tr><td>Análise de sentimentos</td><td>Sim, baseline</td><td>Sim</td><td>Sim (tarefas complexas)</td></tr>
+      <tr><td>Busca por palavras-chave</td><td>Sim</td><td>Muito útil</td><td>Complementar</td></tr>
+      <tr><td>Busca semântica</td><td>Limitado</td><td>Limitado</td><td><strong>Muito indicado</strong></td></tr>
+      <tr><td>Q&amp;A com LLMs / RAG</td><td>Não usual (pode ser usado na recuperação)</td><td>Não usual</td><td><strong>Muito utilizado</strong></td></tr>
+      <tr><td>Poucos recursos computacionais</td><td><strong>Muito indicado</strong></td><td><strong>Muito indicado</strong></td><td>Depende do modelo</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================ PLN II ============================ -->
+<section id="pln-emb">
+  <h2><span class="num">AULA PLN II</span>Limitações do BoW/TF-IDF e embeddings de verdade</h2>
+  <div class="prose">
+    <p>Três problemas que BoW/TF-IDF não resolvem:</p>
+    <ol>
+      <li><strong>Ordem</strong>: “O cachorro mordeu o homem” × “O homem mordeu o cachorro” → mesmo vetor.</li>
+      <li><strong>Sinônimos</strong>: “O carro é rápido” × “O automóvel é veloz” → similaridade 0 (palavras diferentes, posições diferentes no vocabulário).</li>
+      <li><strong>Ambiguidade semântica</strong>: “Fui ao <em>banco</em> sacar dinheiro” × “Sentei no <em>banco</em> da praça” → a mesma posição do vocabulário.</li>
+    </ol>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Característica</th><th>BoW</th><th>TF-IDF</th></tr></thead>
+    <tbody>
+      <tr><td>Identifica palavras presentes</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Considera frequência</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Importância estatística no corpus</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Preserva a ordem</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Reconhece sinônimos</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Significado contextual</td><td>❌</td><td>❌</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Como uma palavra vira vetor</h3>
+    <p>Em <strong>Word2Vec</strong>, treina-se uma rede neural para prever uma palavra a partir das vizinhas. Cachorro e gato aparecem em contextos parecidos (“brinca”, “corre”) e acabam com vetores parecidos. <strong>Os vetores são parâmetros aprendidos</strong> — não uma simples contagem de coocorrências.</p>
+    <p>Dimensões típicas: 50, 100, 300, 768, 1.536… O significado emerge do vetor <em>como um todo</em>, não de uma dimensão isolada.</p>
+
+    <h3>Similaridade de cosseno</h3>
+  </div>
+  <div class="formula">cos(A, B) = (A · B) / (‖A‖ · ‖B‖)</div>
+  <div class="prose">
+    <p>Compara a <strong>orientação</strong> dos vetores, independentemente da magnitude. Próximo de 1: mesma direção; próximo de 0: ortogonais; próximo de −1: opostos.</p>
+<pre>A = (3, 4), B = (6, 8)      A·B = 18 + 32 = 50;  ‖A‖ = 5;  ‖B‖ = 10
+                            cos = 50 / (5·10) = <b>1</b>   (mesma direção, B tem o dobro do tamanho)
+
+A = (3, 0), C = (0, 4)      A·C = 0
+                            cos = <b>0</b>   (90°, nenhuma relação)</pre>
+
+    <h3>Estáticos × contextualizados</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th></th><th>Estáticos</th><th>Contextualizados</th></tr></thead>
+    <tbody>
+      <tr><td>Exemplos</td><td>Word2Vec, GloVe</td><td>Baseados em Transformers (BERT)</td></tr>
+      <tr><td>Vetores</td><td>Geralmente um por palavra</td><td>Varia conforme o contexto</td></tr>
+      <tr><td>Sentidos de “banco”</td><td>Mesmo vetor nas duas frases</td><td>Vetores diferentes</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Word2Vec em Python (gensim)</h3>
+<pre>from gensim.models import Word2Vec
+modelo = Word2Vec(
+    sentences=frases,   <i># lista de frases (listas de tokens)</i>
+    vector_size=20,     <i># dimensões de cada vetor</i>
+    window=3,           <i># 3 palavras antes e 3 depois do alvo</i>
+    min_count=1,        <i># ignora palavras com menos aparições</i>
+    workers=1,          <i># threads de treino</i>
+    seed=42             <i># reprodutibilidade</i>
+)
+modelo.wv["cachorro"]                              <i># vetor</i>
+modelo.wv.similarity("cachorro", "gato")           <i># cosseno</i>
+modelo.wv.most_similar("cachorro", topn=3)         <i># vizinhos</i></pre>
+    <p>Regra prática de <code>vector_size</code>: corpus pequeno (até 100 mil palavras) 10–50; médio 100–200; grande, 300. O corpus de exemplo é minúsculo, então os resultados são pouco confiáveis.</p>
+  </div>
+</section>
+
+<section id="pln-tf">
+  <h2>Transformers e o mecanismo de atenção</h2>
+  <div class="prose">
+    <p>O <strong>Transformer</strong> é uma arquitetura de rede neural para sequências (texto), apresentada em <em>“Attention Is All You Need”</em> (2017). Base da maioria dos LLMs.</p>
+    <div class="chain">Texto → <b>Tokenização</b> → Representações numéricas → <b>Atenção</b> → Processamento neural → Saída</div>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Técnica</th><th>Principal limitação</th></tr></thead>
+    <tbody>
+      <tr><td>BoW</td><td>Não representa bem ordem nem significado</td></tr>
+      <tr><td>TF-IDF</td><td>Não compreende o contexto semântico</td></tr>
+      <tr><td>Embeddings estáticos</td><td>Não separam todos os sentidos de uma palavra</td></tr>
+      <tr><td>Transformers</td><td>Exigem treino e recursos; não garantem compreensão perfeita</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Self-attention</h3>
+    <p>“O animal não atravessou a rua porque <strong>ele</strong> estava cansado.” A quem “ele” se refere? A atenção calcula <em>quanto cada token contribui</em> para a representação de outro — inclusive a distância. Os pesos são <strong>aprendidos</strong>, não regras gramaticais programadas.</p>
+    <h3>Query, Key e Value</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Vetor</th><th>Pergunta intuitiva</th><th>Função</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Query (Q)</strong></td><td>O que estou procurando?</td><td>O que o token quer identificar nos outros</td></tr>
+      <tr><td><strong>Key (K)</strong></td><td>O que posso oferecer?</td><td>Característica usada para medir compatibilidade com a Query</td></tr>
+      <tr><td><strong>Value (V)</strong></td><td>Qual informação carrego?</td><td>Conteúdo que será combinado</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>Analogia: Query = pergunta ao bibliotecário; Key = ficha de cada livro; Value = conteúdo do livro. Q, K, V são <strong>derivados dos tokens</strong>: Q = X·W<sub>Q</sub>, K = X·W<sub>K</sub>, V = X·W<sub>V</sub>, com matrizes aprendidas.</p>
+  </div>
+  <div class="formula">Atenção(Q, K, V) = softmax( Q·Kᵀ / √d<sub>k</sub> ) · V</div>
+  <div class="prose">
+    <ol>
+      <li><strong>Compatibilidade</strong> Q·Kᵀ (produto escalar). Para “ele”: O 0,2; animal 2,8; atravessou 0,5; rua 0,7; cansado 1,9.</li>
+      <li><strong>Escala</strong> ÷ √d<sub>k</sub> e <strong>softmax</strong> → pesos que somam 1 (ex.: O 0,05; animal 0,55; atravessou 0,10; rua 0,10; cansado 0,20).</li>
+      <li><strong>Combinar os Values</strong> com esses pesos: z = Σ pesos·V.</li>
+      <li>Resultado: <strong>representação contextualizada</strong> do token.</li>
+    </ol>
+    <div class="callout warn"><span class="tag">Pegadinha</span><p>Peso 0,55 em “animal” <strong>não</strong> significa 55% de certeza. Significa que o Value de “animal” contribui com 55% para o resultado (“ele”). E não se escolhe só a palavra mais importante: <em>combinam-se vários tokens</em>.</p></div>
+    <p>Pratique a conta no <a href="laboratorio.html">laboratório</a> (softmax e pesos de atenção).</p>
+
+    <h3>Encoder, Decoder e as três famílias</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Família</th><th>O que faz</th><th>Usos</th><th>Exemplo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Encoder-only</strong></td><td>Constrói representações contextualizadas do texto de entrada</td><td>Classificação, entidades, compreensão</td><td>BERT</td></tr>
+      <tr><td><strong>Decoder-only</strong></td><td>Prevê o próximo token, um por vez (atenção causal)</td><td>Chatbots, geração de texto e código</td><td>GPT</td></tr>
+      <tr><td><strong>Encoder-Decoder</strong></td><td>Encoder processa a entrada; decoder gera a saída</td><td>Tradução, transformação de texto</td><td>T5</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Outras peças</h3>
+    <ul>
+      <li><strong>Positional Encoding</strong>: o Transformer não processa um token por vez, então a posição é somada à representação. Sem isso, “O cachorro perseguiu o gato” e “O gato perseguiu o cachorro” se confundiriam.</li>
+      <li><strong>Multi-Head Attention</strong>: várias atenções em paralelo, cada uma com seus Q, K, V; relações diferentes (referente, sujeito–verbo, vizinhança) em “pontos de vista” diferentes; os resultados são combinados.</li>
+      <li><strong>Bloco Transformer</strong>: Multi-Head Attention + <strong>Residual Connection</strong> (soma a entrada ao resultado) + <strong>Layer Normalization</strong> (estabiliza) + <strong>Feed Forward Network</strong>. Os blocos são empilhados.</li>
+      <li><strong>Máscara causal</strong>: em modelos que geram texto, impede que um token consulte os tokens futuros → geração <em>autoregressiva</em>.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="pln-llm">
+  <h2>LLMs e RAG</h2>
+  <div class="prose">
+    <p><strong>LLM</strong> (Large Language Model): modelo treinado com enormes volumes de texto, com milhões/bilhões de parâmetros, que gera, resume, classifica e transforma texto. Muitos usam Transformer.</p>
+    <h3>Como aprende</h3>
+    <ul>
+      <li><strong>Pré-treinamento</strong>: lê grandes volumes de texto, aprende relações entre tokens e ajusta parâmetros para melhorar previsões.</li>
+      <li><strong>Fine-tuning</strong>: treino adicional para tarefas/comportamentos específicos.</li>
+      <li><strong>Instruction tuning</strong>: adaptação para seguir instruções dos usuários.</li>
+    </ul>
+    <h3>Como gera uma resposta (autoregressiva)</h3>
+    <p>Prompt → tokenização → processamento no Transformer → <em>probabilidades</em> dos próximos tokens → escolhe um → adiciona à sequência → repete. Exemplo: “O Brasil é conhecido por…” → suas 45%, seu 25%, ter 20%, outras 10%.</p>
+    <h3>RAG (Retrieval-Augmented Generation)</h3>
+    <p>Para responder com <strong>informações externas</strong> (documentos da empresa, manuais, apostilas, bases atualizadas), o modelo consulta uma base antes de responder.</p>
+    <div class="chain"><b>1) Preparar</b>: documentos → chunks → embeddings → banco vetorial</div><br>
+    <div class="chain"><b>2) Responder</b>: pergunta → embedding → busca dos trechos relevantes → trechos + pergunta → LLM → resposta</div>
+    <h3>Bibliotecas Python</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Biblioteca</th><th>Finalidade</th><th>Exemplo</th></tr></thead>
+    <tbody>
+      <tr><td>NLTK</td><td>Processamento básico, ensino de PLN</td><td>Tokenização, stopwords, stemming</td></tr>
+      <tr><td>spaCy</td><td>Análise linguística</td><td>Lematização, entidades</td></tr>
+      <tr><td>scikit-learn</td><td>Representação numérica + ML</td><td>TF-IDF, classificação de sentimentos</td></tr>
+      <tr><td>sentence-transformers</td><td>Embeddings de sentenças/documentos</td><td>Busca semântica, similaridade</td></tr>
+      <tr><td>transformers</td><td>Modelos pré-treinados</td><td>Sentimentos, perguntas e respostas</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================ VISÃO COMPUTACIONAL ============================ -->
+<section id="vc-intro">
+  <h2><span class="num">AULA 15 · VISÃO COMPUTACIONAL</span>O que é e onde aparece</h2>
+  <div class="prose">
+    <p><strong>Visão Computacional</strong>: área da IA que busca interpretar e extrair informações de imagens e vídeos — identificar objetos, reconhecer rostos, detectar movimento, classificar imagens. Fluxo: <strong>capturar → processar → interpretar</strong>.</p>
+    <p>Aplicações: reconhecimento facial, veículos autônomos, segurança, medicina (radiografias, tomografias), indústria (defeitos), agricultura (pragas, plantas daninhas); e as que usamos sem perceber: filtros de RA, digitalização de documentos, busca por imagem, leitura de placas, contagem de pessoas.</p>
+    <h3>Três conceitos que não são sinônimos</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Área</th><th>Foco</th><th>Exemplos</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Processamento de imagens</strong></td><td>Modificar/melhorar/extrair características</td><td>Brilho, contraste, ruído, filtros, bordas</td></tr>
+      <tr><td><strong>Visão computacional</strong></td><td>Interpretar o que há na imagem</td><td>Identificar um gato, detectar pedestre, contar objetos, reconhecer placa</td></tr>
+      <tr><td><strong>Inteligência artificial</strong></td><td>Campo mais amplo (aprender, raciocinar, planejar, decidir)</td><td>Recomendação, assistentes, rotas, classificação por ML</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Técnicas tradicionais × aprendizado de máquina</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th></th><th>Tradicionais</th><th>Aprendizado de máquina</th></tr></thead>
+    <tbody>
+      <tr><td>Como funcionam</td><td>Regras/operações definidas pelo programador</td><td>Aprendem padrões a partir de dados</td></tr>
+      <tr><td>Exemplos</td><td>Filtros, limiarização, detecção de bordas</td><td>Classificadores treinados, CNNs</td></tr>
+      <tr><td>Dados de treino</td><td>Em geral não precisam</td><td>Necessários (supervisionado)</td></tr>
+      <tr><td>Vantagens</td><td>Simples, controláveis, baratas</td><td>Padrões complexos e variações</td></tr>
+      <tr><td>Limitações</td><td>Sofrem com iluminação, escala, aparência</td><td>Dependem de dados, treino e recursos</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p><strong>Limiarização</strong> (tradicional): “se a intensidade do pixel for menor que X, é escuro” — o computador aplica a regra sem aprender o que é um objeto escuro. <strong>ML</strong>: mostram-se muitas imagens de gatos e cachorros rotuladas e o modelo aprende a diferenciar (sem acertar necessariamente todas). As técnicas tradicionais continuam úteis (filtragem, ruído, preparação) e podem ser combinadas ao ML.</p>
+  </div>
+</section>
+
+<section id="vc-opencv">
+  <h2>Como o computador “vê” e o OpenCV</h2>
+  <div class="prose">
+    <p>Uma imagem digital é uma grade de <strong>pixels</strong>, cada um com valores numéricos. Para o computador não é “um cachorro”: é um conjunto de dados numéricos organizados.</p>
+    <ul>
+      <li><strong>Tons de cinza</strong> (8 bits): um valor por pixel, de 0 (preto) a 255 (branco).</li>
+      <li><strong>Colorida</strong>: 3 canais por pixel. RGB: vermelho (255,0,0), verde (0,255,0), azul (0,0,255), amarelo (255,255,0), branco (255,255,255), preto (0,0,0).</li>
+    </ul>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Resolução</th><th class="num">Pixels</th></tr></thead>
+    <tbody>
+      <tr><td>640 × 480</td><td class="num">307.200</td></tr>
+      <tr><td>1280 × 720</td><td class="num">921.600</td></tr>
+      <tr><td>1920 × 1080</td><td class="num">2.073.600</td></tr>
+      <tr><td>3840 × 2160</td><td class="num">8.294.400</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>1920×1080: ≈ 2 milhões de valores em cinza e ≈ 6 milhões em RGB. Representação: <code>I = H × W × 3</code>; 640×480×3 = 921.600 valores ≈ <strong>900 KiB</strong> sem compressão.</p>
+    <div class="callout warn"><span class="tag">Pegadinha clássica</span><p>O <strong>OpenCV usa BGR</strong>, não RGB. Vermelho puro em BGR = (0, 0, 255); azul puro = (255, 0, 0); verde é igual nos dois.</p></div>
+    <h3>Primeiros passos com OpenCV</h3>
+<pre>pip install opencv-python numpy
+import cv2
+imagem = cv2.imread("imagem.jpg")            <i># None se falhar</i>
+cv2.imshow("Imagem Original", imagem)
+cv2.waitKey(0)                               <i># espera uma tecla</i>
+cv2.destroyAllWindows()
+
+imagem.shape    <i># (480, 640, 3) → 480 linhas, 640 colunas, 3 canais</i>
+imagem.size     <i># 921600; size // 3 = 307200 pixels</i>
+imagem.dtype    <i># uint8 → inteiro sem sinal de 8 bits (0..255)</i>
+
+pixel = imagem[100, 200]     <i># [linha, coluna] → [B, G, R], ex.: [50 100 200]</i>
+azul = imagem[100,200,0]; verde = imagem[100,200,1]; vermelho = imagem[100,200,2]
+
+cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)   <i># shape (480, 640)</i></pre>
+    <p>A conversão para cinza <strong>não é média simples</strong>; usa a luminância <code>Y = 0,299·R + 0,587·G + 0,114·B</code> (olhos são mais sensíveis ao verde). O OpenCV nasceu na Intel em 2000, com foco em eficiência e tempo real.</p>
+  </div>
+</section>
+
+<section id="vc-canny">
+  <h2>Detecção de bordas e o algoritmo de Canny</h2>
+  <div class="prose">
+    <p><strong>Borda</strong>: região onde a intensidade muda bastante entre pixels vizinhos — limite entre objetos, mudança de iluminação/textura, contornos. Linha de pixels homogênea (100, 102, 101, 99, 100) ≠ linha com salto (…, 20, 22, 19, <strong>220</strong>, 225).</p>
+    <p>Mede-se com <strong>gradientes</strong> horizontal G<sub>x</sub> e vertical G<sub>y</sub>; a magnitude é <code>G = √(G<sub>x</sub>² + G<sub>y</sub>²)</code>.</p>
+    <h3>Canny (John Canny, 1986) — 5 etapas</h3>
+    <ol>
+      <li><strong>Redução de ruídos</strong>: filtro Gaussiano (média ponderada que dá mais peso aos vizinhos próximos; deixa a imagem levemente desfocada).</li>
+      <li><strong>Cálculo dos gradientes</strong> (operador Sobel).</li>
+      <li><strong>Supressão de não máximos</strong>: mantém só os máximos locais na direção do gradiente → bordas finas.</li>
+      <li><strong>Limiarização dupla</strong>: acima do limite superior = borda <em>forte</em>; entre os limites = <em>fraca</em>; abaixo do inferior = não é borda.</li>
+      <li><strong>Histerese</strong>: mantém bordas fracas <em>conectadas</em> a fortes; descarta fracas isoladas.</li>
+    </ol>
+<pre>cinza  = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+bordas = cv2.Canny(cinza, 100, 200)     <i># threshold1 (inferior), threshold2 (superior)</i></pre>
+    <ul>
+      <li><strong>Limites baixos</strong> (30, 60): mais bordas, inclusive ruído.</li>
+      <li><strong>Limites altos</strong> (150, 300): só mudanças intensas; bordas fracas somem.</li>
+      <li>Não há configuração universalmente melhor. Há ainda <code>apertureSize</code> (tamanho do Sobel: 3, 5 ou 7) e <code>L2gradient</code>.</li>
+    </ul>
+    <div class="callout"><span class="tag">Não confundir</span><p><strong>Detectar bordas não é reconhecer objetos.</strong> Canny destaca contornos, sem semântica. Reconhecer (YOLO, CNNs, classificadores) identifica <em>o que</em> está na imagem. Uma imagem com muitas bordas não tem necessariamente muitos objetos.</p></div>
+  </div>
+</section>
+
+<section id="vc-cor">
+  <h2>HSV, máscaras e segmentação por cor</h2>
+  <div class="prose">
+    <p><strong>HSV</strong>: <strong>H</strong>ue (matiz: qual cor), <strong>S</strong>aturation (pureza; menor = mais cinza), <strong>V</strong>alue (brilho). No OpenCV: <strong>H: 0–179</strong>; S: 0–255; V: 0–255 (e não 0–360°).</p>
+    <p>HSV é mais intuitivo que BGR para selecionar cores, porque o matiz fica isolado num canal.</p>
+    <p><strong>Segmentação</strong>: dividir a imagem em regiões com certas características (cor, intensidade, textura, forma ou características aprendidas). Uma <strong>máscara</strong> binária marca quais pixels selecionar: 255 (branco) = selecionado, 0 (preto) = ignorado.</p>
+<pre>hsv = cv2.cvtColor(imagem, cv2.COLOR_BGR2HSV)       <i># (não exibe as cores originais!)</i>
+
+<i># o vermelho está nas DUAS pontas da escala H (≈0 e ≈179)</i>
+inf1 = np.array([0,   100, 100]); sup1 = np.array([10,  255, 255])
+inf2 = np.array([170, 100, 100]); sup2 = np.array([179, 255, 255])
+m1 = cv2.inRange(hsv, inf1, sup1)          <i># dentro do intervalo → 255; fora → 0</i>
+m2 = cv2.inRange(hsv, inf2, sup2)
+mascara = cv2.bitwise_or(m1, m2)
+
+resultado = cv2.bitwise_and(imagem, imagem, mask=mascara)   <i># só o vermelho fica colorido</i></pre>
+    <ul>
+      <li>Diminuir a saturação/brilho mínimos → seleciona mais pixels (inclusive cores “lavadas” e escuras).</li>
+      <li>Aumentar o brilho mínimo → regiões de sombra deixam de ser identificadas.</li>
+      <li><strong>Iluminação</strong> (intensidade, sombras, reflexos, tipo de luz, câmera) altera os valores; os limites precisam de ajuste.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="vc-jogo">
+  <h2>Aplicação: jogo controlado por cor na webcam</h2>
+  <div class="prose">
+    <p>A webcam captura em tempo real; o computador acha o objeto pela <strong>cor</strong> (não precisa saber que é uma bolinha); a posição do objeto controla o jogo.</p>
+    <ol>
+      <li><strong>Contornos</strong> da máscara: <code>cv2.findContours()</code> → área, largura, altura, posição.</li>
+      <li><strong>Centro</strong> pelos momentos: <code>M = cv2.moments(contorno)</code>; <code>cx = M["m10"]/M["m00"]</code>, <code>cy = M["m01"]/M["m00"]</code> (checar <code>m00 != 0</code>).</li>
+      <li><strong>Alvos</strong>: <code>cv2.circle</code>, <code>cv2.rectangle</code>, <code>cv2.putText</code>.</li>
+      <li><strong>Acerto</strong>: <code>distancia = √((cx−alvo_x)² + (cy−alvo_y)²)</code>; se menor que o raio do alvo, acertou.</li>
+      <li><strong>Pontuação</strong>: +10 por acerto, alvo muda de lugar, fim aos 50 pontos (ou por tempo).</li>
+    </ol>
+  </div>
+</section>
+
+<section id="vc-cnn">
+  <h2><span class="num">AULA 16 · VISÃO E REDES NEURAIS</span>CNN, YOLO e MediaPipe</h2>
+  <div class="prose">
+    <h3>CNN (Rede Neural Convolucional)</h3>
+    <p>Rede especializada em imagens: usa a informação espacial dos pixels, aprende características visuais automaticamente e combina-as. Por que não uma rede tradicional? Uma imagem colorida 100×100 já tem 100×100×3 = <strong>30.000 entradas</strong>; os pixels viram uma fila e a relação espacial se perde.</p>
+    <ul>
+      <li><strong>Convolução</strong>: pequenos filtros (<em>kernels</em>) percorrem regiões locais e geram um <strong>mapa de características</strong> (feature map). Filtros diferentes aprendem bordas horizontais/verticais, linhas, curvas, texturas, formas.</li>
+      <li><strong>Pooling</strong> (ex.: <strong>Max Pooling</strong>): divide o mapa em regiões e fica com o maior valor de cada uma → representação menor, menos custo.</li>
+      <li><strong>Modelos pré-treinados</strong> e <strong>transfer learning</strong>: aproveitar o que foi aprendido antes em vez de treinar do zero.</li>
+    </ul>
+    <h3>Tipos de tarefa</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Tarefa</th><th>O que responde</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Classificação</strong></td><td>Qual classe está na imagem (gato, cachorro, carro)</td></tr>
+      <tr><td><strong>Detecção</strong></td><td>Quais objetos e onde (caixas delimitadoras)</td></tr>
+      <tr><td><strong>Segmentação</strong></td><td>Quais pixels pertencem a cada objeto/região</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>YOLO (You Only Look Once)</h3>
+    <p>Família de modelos de <strong>detecção</strong>: vários objetos por imagem, cada um com <strong>bounding box</strong>, <strong>classe</strong> e <strong>confidence score</strong>. Funciona em vídeo contínuo.</p>
+<pre>from ultralytics import YOLO
+modelo = YOLO("yolo26n.pt")                         <i># modelo pré-treinado</i>
+resultados = modelo("imagem.jpg"); resultados[0].show()
+modelo.predict(source=0, show=True, conf=0.50)      <i># webcam, confiança mínima 50%</i></pre>
+    <h3>MediaPipe (Google)</h3>
+    <p>Framework com modelos prontos: mãos, pontos faciais, pose, gestos. Rastreamento de mãos: <strong>21 landmarks</strong> por mão, cada um com x, y (normalizados ≈0–1) e z (profundidade estimada). Índices: 0 pulso; 1–4 polegar; 5–8 indicador; 9–12 médio; 13–16 anelar; 17–20 mínimo. Precisa baixar <code>hand_landmarker.task</code>.</p>
+    <p>Outros modelos: Gesture Recognizer, Face Landmarker (478 pontos), Face Detector, Pose Landmarker (33 pontos), Holistic, Object Detector (80 objetos), Image Segmenter, Image Classifier; e para texto/áudio: Text Classifier, Language Detector, Text Embedder, Audio Classifier (500+ sons), Audio Transcriber, Text-to-Speech.</p>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>YOLO</th><th>MediaPipe</th></tr></thead>
+    <tbody>
+      <tr><td>Identifica objetos (pessoas, carros, animais)</td><td>Identifica pontos do corpo (dedos, articulações, face)</td></tr>
+      <tr><td>Produz caixas delimitadoras</td><td>Produz coordenadas de landmarks</td></tr>
+      <tr><td>Pode contar objetos</td><td>Acompanha movimentos e gestos</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose"><p><strong>Haar Cascade</strong> (OpenCV): detecta faces por características visuais — técnica diferente da usada no YOLO.</p></div>
+</section>
+
+<!-- ============================ PROMPTS ============================ -->
+<section id="prompts">
+  <h2><span class="num">AULA 17 · ENGENHARIA DE PROMPTS</span>Como escrever bons prompts</h2>
+  <div class="prose">
+    <p><strong>Engenharia de prompts</strong>: elaborar e aperfeiçoar instruções para modelos de IA, buscando respostas mais relevantes, precisas e adequadas — definindo objetivos, contexto e critérios. Um <strong>prompt</strong> pode ter perguntas, instruções, contexto, exemplos, dados/documentos e conteúdo multimodal.</p>
+    <p>Por dentro: <em>tokenização → representação numérica → processamento (Transformer) → geração de tokens</em>.</p>
+    <h3>Elementos de um bom prompt</h3>
+  </div>
+  <div class="scroller"><table>
+    <thead><tr><th>Elemento</th><th>Função</th><th>Exemplo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Papel</strong> (Role)</td><td>Quem a IA deve representar</td><td>“Você é um professor de programação Java.”</td></tr>
+      <tr><td><strong>Contexto</strong></td><td>Informações necessárias, público</td><td>“Estudantes do 3º ano do técnico em informática, que já viram laços e condicionais.”</td></tr>
+      <tr><td><strong>Tarefa</strong></td><td>O que deve ser feito</td><td>“Identifique erros, explique e apresente a versão corrigida.”</td></tr>
+      <tr><td><strong>Restrições</strong></td><td>Limites e condições</td><td>“Use só bibliotecas nativas. Máx. 300 palavras. Não use <code>break</code>.”</td></tr>
+      <tr><td><strong>Formato</strong></td><td>Como apresentar a resposta</td><td>“Tabela com as colunas Característica, Python, Java.”</td></tr>
+      <tr><td><strong>Exemplos</strong></td><td>Padrão esperado</td><td>Entradas com a saída desejada.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>Prompt genérico (“Explique programação.”) → resposta ampla. Prompt estruturado (público definido, linguagem Java, conceitos pedidos) → resposta direcionada.</p>
+  </div>
+</section>
+
+<section id="prompts-tecnicas">
+  <h2>As cinco técnicas</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Técnica</th><th>Ideia</th><th>Vantagens</th><th>Limitações</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Zero-shot</strong></td>
+        <td>Dar a instrução <em>sem exemplos</em>; o modelo usa o que aprendeu no treino.</td>
+        <td>Simples; sem exemplos rotulados; pouco esforço.</td>
+        <td>Menos controle; ambiguidade; inconsistência em padrões muito específicos.</td>
+      </tr>
+      <tr>
+        <td><strong>Few-shot</strong></td>
+        <td>Dar <em>alguns exemplos</em> de entrada→saída antes da nova entrada. Ligado ao <strong>in-context learning</strong>: sem atualizar pesos nem retreinar.</td>
+        <td>Orienta melhor; mostra padrões; padroniza respostas.</td>
+        <td>Exige preparar exemplos; exemplos ruins induzem erro; gasta tokens; mais custo/latência.</td>
+      </tr>
+      <tr>
+        <td><strong>Chain-of-Thought (CoT)</strong></td>
+        <td>Pedir a resolução em <em>etapas intermediárias</em>, em vez de só a resposta direta. Sem exemplos de resolução.</td>
+        <td>Estrutura problemas complexos; facilita achar erros; pode melhorar raciocínio.</td>
+        <td><strong>Não garante etapas corretas</strong>; explicação coerente mas errada; mais tokens/tempo.</td>
+      </tr>
+      <tr>
+        <td><strong>Role prompting</strong></td>
+        <td>Atribuir um papel/perfil (“você é um professor…”) + público + tarefa + restrições.</td>
+        <td>Adapta linguagem, profundidade e perspectiva ao público.</td>
+        <td>Papel <strong>não dá conhecimento real</strong>; pode errar mesmo como “especialista”; não substitui instruções claras.</td>
+      </tr>
+      <tr>
+        <td><strong>Structured prompting</strong></td>
+        <td>Organizar em seções: papel, contexto, tarefa, restrições, formato (e usar delimitadores/XML/JSON/Markdown).</td>
+        <td>Reduz ambiguidade; define critérios; padroniza resultados.</td>
+        <td>Mais trabalho; estrutura excessiva pode ser desnecessária; não garante que o modelo siga tudo.</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <h3>Exemplos dos slides</h3>
+<pre><b>Zero-shot</b>
+Classifique o sentimento do texto como POSITIVO, NEGATIVO ou NEUTRO.
+Texto: "O sistema é intuitivo, rápido e atende perfeitamente às minhas necessidades."
+Retorne apenas a classificação.
+
+<b>Few-shot</b>
+Classifique os comentários como POSITIVO, NEGATIVO ou NEUTRO.
+Exemplo 1: "Produto excelente, superou minhas expectativas." → POSITIVO
+Exemplo 2: "O produto apresentou defeitos e não funciona." → NEGATIVO
+Exemplo 3: "O produto chegou ontem e possui embalagem azul." → NEUTRO
+Agora classifique: "O desempenho é ótimo, mas a bateria descarrega muito rápido."
+
+<b>Chain-of-Thought</b>
+Uma loja tem 120 notebooks. Na 1ª semana vendeu 25% do estoque; na 2ª, 20% dos restantes.
+Quantos sobraram? Organize a solução em etapas.
+  Etapa 1: 120 × 0,25 = 30 vendidos → 90 restantes
+  Etapa 2: 90 × 0,20 = 18 vendidos → <b>72 notebooks</b></pre>
+    <h4>Quando usar cada uma</h4>
+    <ul>
+      <li><strong>Few-shot</strong>: a tarefa tem regras/padrões específicos, queremos padronizar o formato, as instruções sozinhas não bastam ou existem exemplos representativos.</li>
+      <li><strong>CoT</strong>: problema com várias etapas, dependências entre operações, raciocínio matemático/lógico, ou precisamos entender como se chegou ao resultado.</li>
+      <li><strong>Role</strong>: adaptar ao público, simular situações profissionais, assistentes especializados, mudar formalidade/profundidade.</li>
+      <li><strong>Structured</strong>: assistentes virtuais, revisão de código, relatórios, extração para JSON, automação.</li>
+    </ul>
+    <div class="callout"><span class="tag">Exercício dos slides</span><p>Monte um prompt para “atividade de aprendizagem sobre banco de dados” com: papel, contexto, tarefa, ≥2 restrições e formato. Exemplo de gabarito: papel = professor universitário de BD; contexto = graduação em SI com noções de MER e SQL; tarefa = projetar e implementar o BD de uma biblioteca; restrições = grupos de até 3, só CREATE/INSERT/SELECT/UPDATE/DELETE, até 2 h; formato = título, objetivos, cenário, etapas, requisitos, desafios SQL e critérios (10 pontos).</p></div>
+  </div>
+</section>
+
+<!-- ============================ AUTOTESTE ============================ -->
+<section id="autoteste">
+  <h2>Autoteste: flashcards</h2>
+  <p class="prose">Tente responder de cabeça antes de abrir cada cartão.</p>
+  <div class="cards" id="cards">
+    <div class="card"><button type="button">Qual a diferença entre fitness e “a resposta” do problema?</button><div class="ans">Fitness só <strong>mede a qualidade</strong> da solução; não é necessariamente a resposta. No TSP, fitness = 1/distância; a resposta é a rota.</div></div>
+    <div class="card"><button type="button">Por que mutação demais é ruim e mutação nenhuma também?</button><div class="ans">Sem mutação a população perde diversidade e estagna; com demais, <strong>perdem-se as boas características</strong> dos pais e a busca vira aleatória.</div></div>
+    <div class="card"><button type="button">Quantas rotas tem o TSP com n cidades?</button><div class="ans"><code>(n−1)!</code> (cidade inicial fixa). n=5: 24; n=10: 362.880; n=20: 1,2×10¹⁷ (~73 anos).</div></div>
+    <div class="card"><button type="button">Por que crossover de um ponto não serve no TSP? O que usar?</button><div class="ans">Pode repetir ou omitir cidades. Use <strong>PMX</strong> (mapeamento) ou <strong>OX</strong> (preserva ordem relativa).</div></div>
+    <div class="card"><button type="button">Roleta × torneio × ranking × elitismo</button><div class="ans">Roleta: prob. ∝ fitness. Torneio: melhor entre sorteados. Ranking: pela posição (reduz extremos). Elitismo: melhores passam direto.</div></div>
+    <div class="card"><button type="button">Swap × insertion × inversion</button><div class="ans">Swap troca duas posições; insertion remove e reinsere deslocando os demais; inversion vira um trecho (≈ 2-opt, ótima no TSP).</div></div>
+    <div class="card"><button type="button">Stemming × lematização</button><div class="ans">Stemming corta por regras (estudando → estud; pode não ser palavra). Lematização devolve a forma-base (estudou → estudar), considerando linguística e contexto.</div></div>
+    <div class="card"><button type="button">Calcule o TF-IDF de “inteligência” no Doc 1 do exemplo</button><div class="ans">TF = 1/4 = 0,25; IDF = log₁₀(2/1) = 0,301; produto ≈ <strong>0,075</strong>. “aprende” → IDF 0 → TF-IDF 0.</div></div>
+    <div class="card"><button type="button">Três limitações de BoW/TF-IDF</button><div class="ans">Ignoram a <strong>ordem</strong>; não reconhecem <strong>sinônimos</strong> (similaridade 0); não resolvem <strong>ambiguidade</strong> semântica (“banco”).</div></div>
+    <div class="card"><button type="button">Cosseno entre (3,4) e (6,8)? E entre (3,0) e (0,4)?</button><div class="ans">50/(5·10) = <strong>1</strong>; e 0/(3·4) = <strong>0</strong>. Cosseno ignora magnitude.</div></div>
+    <div class="card"><button type="button">Como Word2Vec aprende os vetores?</button><div class="ans">Rede neural treinada para <strong>prever uma palavra pelas vizinhas</strong>; os vetores são <strong>parâmetros aprendidos</strong>, não contagens de coocorrência.</div></div>
+    <div class="card"><button type="button">Escreva a fórmula da atenção e explique Q, K, V</button><div class="ans"><code>softmax(Q·Kᵀ/√d<sub>k</sub>)·V</code>. Q = o que procuro; K = o que ofereço; V = informação carregada. Pesos somam 1 e ponderam os Values.</div></div>
+    <div class="card"><button type="button">BERT, GPT, T5: famílias e usos</button><div class="ans">BERT: encoder-only (compreensão/classificação). GPT: decoder-only (geração). T5: encoder-decoder (tradução/transformação).</div></div>
+    <div class="card"><button type="button">Para que servem positional encoding e máscara causal?</button><div class="ans">Positional: informar a <strong>posição</strong> dos tokens. Causal: impedir olhar tokens <strong>futuros</strong> (geração autoregressiva).</div></div>
+    <div class="card"><button type="button">Descreva o RAG</button><div class="ans">Preparar: documentos → chunks → embeddings → banco vetorial. Responder: pergunta → embedding → buscar trechos → enviar ao LLM com a pergunta → resposta.</div></div>
+    <div class="card"><button type="button">OpenCV: ordem dos canais e ranges do HSV</button><div class="ans"><strong>BGR</strong>. HSV: H 0–179, S 0–255, V 0–255. Vermelho precisa de duas faixas (≈0–10 e 170–179).</div></div>
+    <div class="card"><button type="button">As 5 etapas do Canny</button><div class="ans">Gaussiano (ruído) → gradientes → supressão de não máximos → limiarização dupla → histerese.</div></div>
+    <div class="card"><button type="button">Cinza ≠ média: por quê?</button><div class="ans"><code>Y = 0,299R + 0,587G + 0,114B</code>: o olho é mais sensível ao verde.</div></div>
+    <div class="card"><button type="button">Classificação × detecção × segmentação</button><div class="ans">Qual classe? / Quais objetos e onde (caixas)? / Quais pixels de cada objeto?</div></div>
+    <div class="card"><button type="button">YOLO × MediaPipe</button><div class="ans">YOLO: objetos, caixas, classe e confiança. MediaPipe: landmarks (21 por mão) para dedos, face, pose.</div></div>
+    <div class="card"><button type="button">Zero-shot × few-shot × CoT × role × structured</button><div class="ans">Sem exemplos / com exemplos (in-context, sem retreino) / raciocínio em etapas (não garante correção) / persona (não dá conhecimento real) / seções e delimitadores.</div></div>
+    <div class="card"><button type="button">Elementos de um bom prompt</button><div class="ans">Papel, contexto, tarefa, restrições, formato de saída e exemplos.</div></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <p>Fonte: decks da disciplina de Inteligência Artificial — aulas 11 (algoritmos genéticos), 12 (introdução a PLN), PLN II, 15 e 16 (visão computacional) e 17 (engenharia de prompts). Bibliografia: RUSSELL, Stuart J.; NORVIG, Peter. <em>Inteligência Artificial: Uma Abordagem Moderna</em>. GEN LTC, 2022.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cardBtns = document.querySelectorAll("#cards .card button");
+  for (var b=0;b<cardBtns.length;b++){
+    cardBtns[b].addEventListener("click", function(){
+      this.parentNode.classList.toggle("open");
+    });
+  }
+})();
+</script>
+<script src="theme.js" defer></script>
+</body>
+</html>

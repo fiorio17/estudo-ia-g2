@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Laboratorio de IA G2: algoritmo genetico, OX e PMX, TF-IDF, cosseno e atencao, com calculos no navegador.">
+  <title>Laboratório — IA G2</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🧪%3C/text%3E%3C/svg%3E">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html{-webkit-text-size-adjust:100%;}
+    body{margin:0;}
+    img,svg,video{max-width:100%;height:auto;}
+    button,input,select,textarea{font:inherit;color:inherit;}
+    table{border-collapse:collapse;}
+  </style>
+</head>
+<body>
+<style>
+:root{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --amber:#A65A0B; --amber-soft:#F7E6D2;
+  --ok:#1B6B49; --ok-soft:#DCEFE4; --bad:#A32741; --bad-soft:#F7DDE3;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+  --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+    --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+    --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+    --amber:#E7A45C; --amber-soft:#3A2A18;
+    --ok:#5FD3A0; --ok-soft:#173327; --bad:#F2879E; --bad-soft:#3A1822;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+  --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+  --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+  --amber:#E7A45C; --amber-soft:#3A2A18;
+  --ok:#5FD3A0; --ok-soft:#173327; --bad:#F2879E; --bad-soft:#3A1822;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+:root[data-theme="light"]{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --amber:#A65A0B; --amber-soft:#F7E6D2;
+  --ok:#1B6B49; --ok-soft:#DCEFE4; --bad:#A32741; --bad-soft:#F7DDE3;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:16.5px; line-height:1.6;
+  background-image:
+    repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:780px; margin:0 auto; padding:0 20px 90px;}
+
+.masthead{padding:52px 0 24px; border-bottom:2px solid var(--ink); margin-bottom:8px;}
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft); margin:0 0 12px;}
+h1{font-family:var(--display); font-weight:700; font-size:clamp(2.1rem,5.5vw,3.2rem);
+  line-height:1.05; letter-spacing:-.02em; margin:0 0 14px; text-wrap:balance;}
+h1 em{font-style:italic; color:var(--accent);}
+.lede{font-size:1.05rem; color:var(--ink-soft); margin:0; max-width:58ch;}
+
+.scorebar{position:sticky; top:0; z-index:20; background:var(--paper);
+  border-bottom:1px solid var(--line); padding:11px 0 10px; margin-bottom:30px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+.track{flex:1; min-width:150px; height:5px; background:var(--surface-2); border-radius:3px; overflow:hidden;}
+.track span{display:block; height:100%; width:0; background:var(--accent); transition:width .3s;}
+@media (prefers-reduced-motion:reduce){ .track span{transition:none;} }
+.tally{font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--ink-soft);
+  font-variant-numeric:tabular-nums; white-space:nowrap;}
+.tally b{color:var(--ink);}
+.tally .hit{color:var(--ok);} .tally .miss{color:var(--bad);}
+
+.parte{font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:46px 0 4px; padding-top:8px;}
+.parte:first-of-type{margin-top:26px;}
+h2{font-family:var(--display); font-size:1.5rem; letter-spacing:-.012em; margin:0 0 6px;}
+.parte-sub{color:var(--ink-soft); font-size:.92rem; margin:0 0 20px;}
+
+.q{background:var(--surface); border:1px solid var(--line); border-radius:4px;
+  padding:20px 22px; margin-bottom:16px; box-shadow:var(--shadow);}
+.q-num{font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; color:var(--ink-soft);
+  text-transform:uppercase; display:block; margin-bottom:9px;}
+.q-num .kind{color:var(--accent);}
+.stem{margin:0 0 15px; font-size:1rem;}
+.stem code, .opt code, .why code{font-family:var(--mono); font-size:.87em;
+  background:var(--surface-2); padding:.1em .34em; border-radius:2px;}
+.stem strong{font-weight:650;}
+
+.graph{font-family:var(--mono); font-size:.82rem; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:3px; padding:12px 14px; margin:0 0 15px; overflow-x:auto; line-height:1.75;}
+.graph b{color:var(--accent);}
+
+.opts{display:grid; gap:7px;}
+.opt{display:flex; gap:11px; align-items:flex-start; width:100%; text-align:left;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:3px;
+  padding:11px 13px; font-family:inherit; font-size:.94rem; line-height:1.5; color:var(--ink);
+  cursor:pointer; transition:border-color .15s, background .15s;}
+.opt:hover:not(:disabled){border-color:var(--accent);}
+.opt:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.opt:disabled{cursor:default;}
+.opt .letra{font-family:var(--mono); font-size:.76rem; font-weight:700; color:var(--ink-soft);
+  border:1px solid var(--line); border-radius:2px; width:21px; height:21px; flex:none;
+  display:flex; align-items:center; justify-content:center; margin-top:1px; background:var(--surface);}
+.opt.certa{background:var(--ok-soft); border-color:var(--ok);}
+.opt.certa .letra{background:var(--ok); border-color:var(--ok); color:var(--surface);}
+.opt.errada{background:var(--bad-soft); border-color:var(--bad);}
+.opt.errada .letra{background:var(--bad); border-color:var(--bad); color:var(--surface);}
+
+.why{margin:13px 0 0; padding:13px 15px; border-radius:3px; font-size:.92rem;
+  background:var(--surface-2); border:1px solid var(--line); display:none;}
+.q.resolvida .why{display:block;}
+.why .verdict{font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+  display:block; margin-bottom:6px;}
+.why.ok .verdict{color:var(--ok);} .why.no .verdict{color:var(--bad);}
+.why p{margin:0 0 8px;} .why p:last-child{margin:0;}
+.why .ref{font-size:.85rem; color:var(--ink-soft);}
+
+.result{margin-top:40px; padding:26px; border:2px solid var(--ink); border-radius:4px;
+  background:var(--surface); display:none;}
+.result.on{display:block;}
+.result h3{font-family:var(--display); font-size:1.6rem; margin:0 0 6px;}
+.big{font-family:var(--mono); font-size:2.6rem; font-weight:700; color:var(--accent);
+  font-variant-numeric:tabular-nums; line-height:1; margin:0 0 4px;}
+.result p{margin:0 0 12px; color:var(--ink-soft);}
+.weak{margin:16px 0 0; padding:0; list-style:none;}
+.weak li{font-size:.9rem; padding:7px 0; border-top:1px solid var(--line); display:flex; gap:10px;}
+.weak li span:first-child{font-family:var(--mono); font-size:.76rem; color:var(--bad); flex:none; width:56px;}
+
+.actions{display:flex; gap:9px; flex-wrap:wrap; margin-top:20px;}
+.act{background:var(--ink); color:var(--paper); border:1px solid var(--ink); border-radius:2px;
+  padding:9px 17px; font-family:inherit; font-size:.9rem; font-weight:550; cursor:pointer;}
+.act.ghost{background:transparent; color:var(--ink-soft); border-color:var(--line);}
+.act:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+footer{margin-top:54px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:.85rem; color:var(--ink-soft);}
+footer a{color:var(--accent);}
+</style>
+
+<style>
+.page{max-width:860px;}
+.masthead{padding:52px 0 24px; border-bottom:2px solid var(--ink); margin-bottom:28px;}
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 12px;}
+h1{font-family:var(--display); font-weight:700; font-size:clamp(2.1rem,5.5vw,3.2rem); line-height:1.05; letter-spacing:-.02em; margin:0 0 14px; text-wrap:balance;}
+h1 em{font-style:italic; color:var(--accent);}
+.lede{font-size:1.05rem; color:var(--ink-soft); margin:0; max-width:60ch;}
+.tool{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:22px 24px; margin:0 0 26px; box-shadow:var(--shadow);}
+.tool h2{font-family:var(--display); font-size:1.4rem; margin:0 0 4px; letter-spacing:-.01em;}
+.tool .tag{font-family:var(--mono); font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:8px;}
+.tool p.d{color:var(--ink-soft); font-size:.93rem; margin:0 0 16px;}
+.row{display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; margin:0 0 14px;}
+label{font-size:.88rem; color:var(--ink-soft); display:flex; flex-direction:column; gap:5px;}
+label.inl{flex-direction:row; align-items:center; gap:8px;}
+input[type=text], input[type=number], textarea{background:var(--surface-2); border:1px solid var(--line); border-radius:3px; padding:8px 10px; font-family:var(--mono); font-size:.9rem; color:var(--ink); width:100%;}
+textarea{min-height:84px; resize:vertical;}
+input[type=range]{accent-color:var(--accent); width:190px;}
+input:focus-visible, textarea:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.val{font-family:var(--mono); color:var(--ink); font-weight:700;}
+button.act{background:var(--ink); color:var(--paper); border:1px solid var(--ink); border-radius:2px; padding:8px 16px; font-size:.88rem; font-weight:550; cursor:pointer;}
+button.act.ghost{background:transparent; color:var(--ink-soft); border-color:var(--line);}
+.scroller{overflow-x:auto; margin:12px 0; border:1px solid var(--line); border-radius:3px; background:var(--surface);}
+table{border-collapse:collapse; width:100%; font-size:.9rem;}
+th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--line);}
+thead th{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); background:var(--surface-2); white-space:nowrap;}
+tbody tr:last-child td{border-bottom:0;}
+td.n, th.n{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+tr.top td{background:var(--accent-soft);}
+.out{font-family:var(--mono); font-size:.9rem; background:var(--surface-2); border:1px solid var(--line); border-radius:3px; padding:12px 14px; margin:10px 0 0; white-space:pre-wrap; overflow-x:auto; line-height:1.7;}
+.out b{color:var(--accent);}
+.err{color:var(--bad,#A32741); font-family:var(--mono); font-size:.85rem; margin:6px 0 0;}
+.hist{display:flex; align-items:flex-end; gap:3px; height:70px; margin:8px 0 2px; border-bottom:1px solid var(--line);}
+.hist span{flex:1; min-width:3px; background:var(--accent); border-radius:2px 2px 0 0; opacity:.85;}
+.small{font-size:.8rem; color:var(--ink-soft);}
+nav.top{display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 26px; font-size:.88rem;}
+nav.top a{color:var(--accent);}
+footer{margin-top:44px; padding-top:20px; border-top:1px solid var(--line); font-size:.85rem; color:var(--ink-soft);}
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Laboratório · Inteligência Artificial · G2</p>
+  <h1>Faça as contas, <em>de verdade</em>.</h1>
+  <p class="lede">Cinco ferramentas para treinar o que cai em prova com cálculo: rodar um algoritmo genético, cruzar rotas com OX e PMX, calcular TF-IDF, similaridade de cosseno e pesos de atenção.</p>
+</header>
+
+<nav class="top" aria-label="Ferramentas">
+  <a href="#ag">Algoritmo genético</a><a href="#cx">OX e PMX</a><a href="#tf">TF-IDF</a><a href="#cs">Cosseno</a><a href="#at">Atenção</a><a href="index.html">← início</a>
+</nav>
+
+<!-- 1. AG -->
+<section class="tool" id="ag">
+  <span class="tag">1 · algoritmos genéticos</span>
+  <h2>Maximizar x² com 4 bits</h2>
+  <p class="d">O exemplo da aula 11. Cada indivíduo é um número de 0 a 15 em binário; o fitness é x². A seleção é por <strong>roleta</strong>, o crossover é de <strong>um ponto</strong> e a mutação inverte cada bit com a taxa escolhida. O ótimo é 1111 (15 → 225).</p>
+  <div class="row">
+    <label>Tamanho da população: <span class="val" id="ag-n-v">6</span><input type="range" id="ag-n" min="2" max="20" value="6"></label>
+    <label>Taxa de mutação: <span class="val" id="ag-m-v">5%</span><input type="range" id="ag-m" min="0" max="50" value="5"></label>
+    <label class="inl"><input type="checkbox" id="ag-e" checked> elitismo (guarda o melhor)</label>
+  </div>
+  <div class="row">
+    <button class="act" id="ag-step">Próxima geração</button>
+    <button class="act ghost" id="ag-run">Rodar 20 gerações</button>
+    <button class="act ghost" id="ag-reset">Reiniciar</button>
+    <span class="small" id="ag-info"></span>
+  </div>
+  <div class="scroller"><table><thead><tr><th>Indivíduo (bin)</th><th class="n">dec</th><th class="n">fitness (x²)</th></tr></thead><tbody id="ag-tab"></tbody></table></div>
+  <div class="small">Melhor fitness por geração:</div>
+  <div class="hist" id="ag-hist" aria-hidden="true"></div>
+  <p class="small">Teste: com mutação 0% e sem elitismo a população pode estagnar (perde diversidade) ou perder o melhor; com mutação alta (≥40%) ela vira busca aleatória e raramente estabiliza.</p>
+</section>
+
+<!-- 2. OX / PMX -->
+<section class="tool" id="cx">
+  <span class="tag">2 · cruzamento para rotas</span>
+  <h2>OX e PMX passo a passo</h2>
+  <p class="d">Digite dois pais (permutações das mesmas cidades, separadas por vírgula) e os dois pontos de corte. O trecho do meio (posições entre os cortes) é herdado do pai 1 no filho 1. Valores iniciais = exemplo dos slides.</p>
+  <div class="row">
+    <label style="flex:1 1 280px">Pai 1<input type="text" id="cx-p1" value="1,2,3,4,5,6,7,8,9"></label>
+    <label style="flex:1 1 280px">Pai 2<input type="text" id="cx-p2" value="9,3,7,8,2,6,5,1,4"></label>
+  </div>
+  <div class="row">
+    <label>1º corte (posições antes dele: índice 0..n)<input type="number" id="cx-a" value="3" min="0"></label>
+    <label>2º corte<input type="number" id="cx-b" value="7" min="0"></label>
+    <button class="act" id="cx-go">Calcular</button>
+  </div>
+  <div id="cx-err" class="err"></div>
+  <div class="out" id="cx-out"></div>
+</section>
+
+<!-- 3. TF-IDF -->
+<section class="tool" id="tf">
+  <span class="tag">3 · PLN</span>
+  <h2>TF-IDF</h2>
+  <p class="d">Um documento por linha. TF = ocorrências ÷ total de palavras do documento. IDF = log₁₀(N ÷ nº de documentos com o termo). Pré-carregado com o exemplo dos slides (esperado: “inteligência” → 0,075; “aprende” → 0).</p>
+  <label>Corpus<textarea id="tf-docs">A inteligência artificial aprende.
+O menino aprende a ler.</textarea></label>
+  <div class="row" style="margin-top:12px">
+    <label>Termo<input type="text" id="tf-t" value="inteligência"></label>
+    <label>Documento nº<input type="number" id="tf-d" value="1" min="1"></label>
+    <button class="act" id="tf-go">Calcular</button>
+  </div>
+  <div class="out" id="tf-out"></div>
+</section>
+
+<!-- 4. Cosseno -->
+<section class="tool" id="cs">
+  <span class="tag">4 · embeddings</span>
+  <h2>Similaridade de cosseno</h2>
+  <p class="d">Vetores com o mesmo número de componentes, separados por vírgula. Exemplos: (3,4)×(6,8) → 1; (3,0)×(0,4) → 0; os vetores didáticos carro (0,82; 0,71; 0,15) × automóvel (0,79; 0,74; 0,18) × banana (0,12; 0,21; 0,91).</p>
+  <div class="row">
+    <label style="flex:1 1 240px">A<input type="text" id="cs-a" value="3,4"></label>
+    <label style="flex:1 1 240px">B<input type="text" id="cs-b" value="6,8"></label>
+    <button class="act" id="cs-go">Calcular</button>
+  </div>
+  <div class="row">
+    <button class="act ghost" data-a="3,0" data-b="0,4">(3,0)×(0,4)</button>
+    <button class="act ghost" data-a="0.82,0.71,0.15" data-b="0.79,0.74,0.18">carro × automóvel</button>
+    <button class="act ghost" data-a="0.82,0.71,0.15" data-b="0.12,0.21,0.91">carro × banana</button>
+    <button class="act ghost" data-a="1,2" data-b="-1,-2">opostos</button>
+  </div>
+  <div id="cs-err" class="err"></div>
+  <div class="out" id="cs-out"></div>
+</section>
+
+<!-- 5. Atenção -->
+<section class="tool" id="at">
+  <span class="tag">5 · transformers</span>
+  <h2>Softmax e pesos de atenção</h2>
+  <p class="d">Informe os tokens e as compatibilidades (Q·Kᵀ) do token analisado, e a dimensão d<sub>k</sub>. A ferramenta divide por √d<sub>k</sub> e aplica o softmax, mostrando os pesos (somam 1). Pré-carregado com os valores ilustrativos do slide para “ele”.</p>
+  <div class="row">
+    <label style="flex:1 1 300px">Tokens<input type="text" id="at-t" value="O, animal, atravessou, rua, cansado"></label>
+    <label style="flex:1 1 300px">Compatibilidades (Q·K)<input type="text" id="at-s" value="0.2, 2.8, 0.5, 0.7, 1.9"></label>
+    <label>d<sub>k</sub><input type="number" id="at-d" value="1" min="1"></label>
+    <button class="act" id="at-go">Calcular</button>
+  </div>
+  <p class="small">Com d<sub>k</sub> = 1 não há escala efetiva. Os pesos 0,05 / 0,55 / 0,10 / 0,10 / 0,20 do slide são ilustrativos e não vêm exatamente desses números — o objetivo aqui é ver o efeito do softmax e da escala.</p>
+  <div id="at-err" class="err"></div>
+  <div class="scroller"><table><thead><tr><th>Token</th><th class="n">score</th><th class="n">score/√d<sub>k</sub></th><th class="n">peso (softmax)</th></tr></thead><tbody id="at-tab"></tbody></table></div>
+</section>
+
+<footer><p>Ferramentas didáticas — rodam no navegador, sem enviar nada para lugar nenhum. Conteúdo conforme os decks das aulas 11, 12, PLN II.</p></footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function fmt(x, d){ return Number(x).toFixed(d).replace(".", ","); }
+  function lista(s){ return s.split(",").map(function(x){ return x.trim(); }).filter(function(x){ return x.length; }); }
+
+  /* ---------- 1. AG ---------- */
+  var pop = [], gen = 0, hist = [];
+  function fit(x){ return x * x; }
+  function bin(x){ var s = x.toString(2); while (s.length < 4) s = "0" + s; return s; }
+  function novaPop(){
+    var n = +$("ag-n").value; pop = [];
+    for (var i=0;i<n;i++) pop.push(Math.floor(Math.random()*16));
+    gen = 0; hist = [Math.max.apply(null, pop.map(fit))]; pintarAG();
+  }
+  function roleta(){
+    var tot = 0, i; for (i=0;i<pop.length;i++) tot += fit(pop[i]);
+    if (tot === 0) return pop[Math.floor(Math.random()*pop.length)];
+    var r = Math.random()*tot, acc = 0;
+    for (i=0;i<pop.length;i++){ acc += fit(pop[i]); if (r <= acc) return pop[i]; }
+    return pop[pop.length-1];
+  }
+  function mutar(x, taxa){
+    for (var b=0;b<4;b++) if (Math.random() < taxa) x ^= (1<<b);
+    return x;
+  }
+  function proxima(){
+    var n = pop.length, taxa = +$("ag-m").value/100, nova = [], i;
+    if ($("ag-e").checked){
+      var melhor = pop[0]; for (i=1;i<n;i++) if (fit(pop[i]) > fit(melhor)) melhor = pop[i];
+      nova.push(melhor);
+    }
+    while (nova.length < n){
+      var p1 = roleta(), p2 = roleta(), corte = 1 + Math.floor(Math.random()*3);
+      var mask = (1<<(4-corte)) - 1;
+      var f1 = (p1 & ~mask & 15) | (p2 & mask);
+      var f2 = (p2 & ~mask & 15) | (p1 & mask);
+      nova.push(mutar(f1, taxa));
+      if (nova.length < n) nova.push(mutar(f2, taxa));
+    }
+    pop = nova; gen++; hist.push(Math.max.apply(null, pop.map(fit)));
+    pintarAG();
+  }
+  function pintarAG(){
+    var ord = pop.slice().sort(function(a,b){ return fit(b) - fit(a); });
+    var h = "";
+    for (var i=0;i<ord.length;i++)
+      h += '<tr' + (i===0 ? ' class="top"' : '') + '><td class="n">' + bin(ord[i]) + '</td><td class="n">' + ord[i] + '</td><td class="n">' + fit(ord[i]) + '</td></tr>';
+    $("ag-tab").innerHTML = h;
+    var soma = 0; for (i=0;i<pop.length;i++) soma += fit(pop[i]);
+    $("ag-info").textContent = "geração " + gen + " · melhor " + fit(ord[0]) + " · média " + fmt(soma/pop.length, 1);
+    var hh = "", ult = hist.slice(-60);
+    for (i=0;i<ult.length;i++) hh += '<span title="' + ult[i] + '" style="height:' + (ult[i]/225*100) + '%"></span>';
+    $("ag-hist").innerHTML = hh;
+  }
+  $("ag-n").addEventListener("input", function(){ $("ag-n-v").textContent = this.value; novaPop(); });
+  $("ag-m").addEventListener("input", function(){ $("ag-m-v").textContent = this.value + "%"; });
+  $("ag-step").addEventListener("click", proxima);
+  $("ag-run").addEventListener("click", function(){ for (var i=0;i<20;i++) proxima(); });
+  $("ag-reset").addEventListener("click", novaPop);
+  novaPop();
+
+  /* ---------- 2. OX / PMX ---------- */
+  function ox(p1, p2, a, b){
+    var n = p1.length, f = new Array(n), seg = p1.slice(a, b), i;
+    for (i=a;i<b;i++) f[i] = p1[i];
+    var seq = [];
+    for (i=0;i<n;i++){ var v = p2[(b+i)%n]; if (seg.indexOf(v) < 0) seq.push(v); }
+    var k = 0;
+    for (i=0;i<n-(b-a);i++) f[(b+i)%n] = seq[k++];
+    return {f:f, seq:seq};
+  }
+  function pmx(p1, p2, a, b){
+    var n = p1.length, f = new Array(n), i;
+    for (i=a;i<b;i++) f[i] = p1[i];
+    var seg = p1.slice(a, b);
+    for (i=0;i<n;i++){
+      if (i>=a && i<b) continue;
+      var v = p2[i], g = 0;
+      while (seg.indexOf(v) >= 0 && g++ < 100) v = p2[p1.indexOf(v)];
+      f[i] = v;
+    }
+    return f;
+  }
+  function marcar(arr, a, b){
+    var s = [];
+    for (var i=0;i<arr.length;i++){
+      if (i === a) s.push("|");
+      s.push((i>=a && i<b) ? "<b>" + arr[i] + "</b>" : arr[i]);
+      if (i === b-1) s.push("|");
+    }
+    return "[" + s.join(" ") + "]";
+  }
+  function calcCX(){
+    var p1 = lista($("cx-p1").value), p2 = lista($("cx-p2").value);
+    var a = +$("cx-a").value, b = +$("cx-b").value, e = $("cx-err");
+    e.textContent = ""; $("cx-out").innerHTML = "";
+    if (p1.length !== p2.length || p1.length < 3){ e.textContent = "Os pais precisam ter o mesmo tamanho (≥ 3 cidades)."; return; }
+    if (p1.slice().sort().join() !== p2.slice().sort().join()){ e.textContent = "Os pais precisam ser permutações dos mesmos elementos, sem repetição."; return; }
+    if (new Set(p1).size !== p1.length){ e.textContent = "Há cidades repetidas."; return; }
+    if (!(a >= 0 && b > a && b <= p1.length)){ e.textContent = "Cortes inválidos: use 0 ≤ 1º < 2º ≤ " + p1.length + "."; return; }
+    var o1 = ox(p1, p2, a, b), o2 = ox(p2, p1, a, b);
+    var m1 = pmx(p1, p2, a, b), m2 = pmx(p2, p1, a, b);
+    var t = "";
+    t += "Pai 1: " + marcar(p1, a, b) + "\nPai 2: " + marcar(p2, a, b) + "\n\n";
+    t += "<b>OX</b>\n";
+    t += "  Lista de P2 a partir do 2º corte, sem os genes do trecho de P1: " + o1.seq.join(", ") + "\n";
+    t += "  Filho 1: " + marcar(o1.f, a, b) + "\n";
+    t += "  Filho 2: " + marcar(o2.f, a, b) + "   (papéis dos pais trocados)\n\n";
+    t += "<b>PMX</b>\n";
+    t += "  Filho 1: " + marcar(m1, a, b) + "\n";
+    t += "  Filho 2: " + marcar(m2, a, b) + "   (papéis dos pais trocados)";
+    $("cx-out").innerHTML = t;
+  }
+  $("cx-go").addEventListener("click", calcCX); calcCX();
+
+  /* ---------- 3. TF-IDF ---------- */
+  function palavras(s){
+    return s.toLowerCase().replace(/[.,;:!?()"“”]/g, " ").split(/\s+/).filter(function(x){ return x.length; });
+  }
+  function calcTF(){
+    var docs = $("tf-docs").value.split("\n").filter(function(l){ return l.trim().length; });
+    var termo = $("tf-t").value.trim().toLowerCase(), d = +$("tf-d").value, out = $("tf-out");
+    if (!docs.length || !termo || !(d >= 1 && d <= docs.length)){ out.textContent = "Preencha o corpus, o termo e um nº de documento válido (1 a " + docs.length + ")."; return; }
+    var ws = palavras(docs[d-1]), cont = 0, i;
+    for (i=0;i<ws.length;i++) if (ws[i] === termo) cont++;
+    var tf = cont / ws.length, df = 0;
+    for (i=0;i<docs.length;i++) if (palavras(docs[i]).indexOf(termo) >= 0) df++;
+    var t = 'Documento ' + d + ': "' + docs[d-1] + '" (' + ws.length + ' palavras)\n';
+    t += 'TF = ' + cont + ' / ' + ws.length + ' = <b>' + fmt(tf, 4) + '</b>\n';
+    if (df === 0){ t += 'O termo não aparece em nenhum documento: IDF indefinido (divisão por zero).'; out.innerHTML = t; return; }
+    var idf = Math.log(docs.length/df) / Math.LN10;
+    t += 'IDF = log10(' + docs.length + ' / ' + df + ') = <b>' + fmt(idf, 4) + '</b>\n';
+    t += 'TF-IDF = ' + fmt(tf, 4) + ' × ' + fmt(idf, 4) + ' = <b>' + fmt(tf*idf, 4) + '</b>';
+    out.innerHTML = t;
+  }
+  $("tf-go").addEventListener("click", calcTF); calcTF();
+
+  /* ---------- 4. Cosseno ---------- */
+  function nums(s){ return lista(s).map(function(x){ return parseFloat(x.replace(",", ".")); }); }
+  function calcCS(){
+    var A = nums($("cs-a").value), B = nums($("cs-b").value), e = $("cs-err"), out = $("cs-out");
+    e.textContent = ""; out.innerHTML = "";
+    var ruim = false; A.concat(B).forEach(function(x){ if (isNaN(x)) ruim = true; });
+    if (ruim || A.length !== B.length || !A.length){ e.textContent = "Use números separados por vírgula, com o mesmo número de componentes."; return; }
+    var dot = 0, na = 0, nb = 0, i;
+    for (i=0;i<A.length;i++){ dot += A[i]*B[i]; na += A[i]*A[i]; nb += B[i]*B[i]; }
+    na = Math.sqrt(na); nb = Math.sqrt(nb);
+    if (na === 0 || nb === 0){ e.textContent = "Vetor nulo: o cosseno não está definido."; return; }
+    var c = dot/(na*nb), leitura;
+    if (c > 0.95) leitura = "mesma direção (muito semelhantes)";
+    else if (c > 0.5) leitura = "direções parecidas";
+    else if (c > -0.05 && c < 0.05) leitura = "aproximadamente ortogonais (sem relação)";
+    else if (c < -0.5) leitura = "direções opostas";
+    else leitura = "relação fraca";
+    out.innerHTML = "A · B = " + fmt(dot, 4) + "\n‖A‖ = " + fmt(na, 4) + "   ‖B‖ = " + fmt(nb, 4) + "\ncos = A·B / (‖A‖·‖B‖) = <b>" + fmt(c, 4) + "</b>  → " + leitura;
+  }
+  $("cs-go").addEventListener("click", calcCS);
+  var atalhos = document.querySelectorAll("#cs button[data-a]");
+  for (var z=0; z<atalhos.length; z++) atalhos[z].addEventListener("click", function(){
+    $("cs-a").value = this.getAttribute("data-a"); $("cs-b").value = this.getAttribute("data-b"); calcCS();
+  });
+  calcCS();
+
+  /* ---------- 5. Atenção ---------- */
+  function calcAT(){
+    var toks = lista($("at-t").value), sc = nums($("at-s").value), dk = +$("at-d").value, e = $("at-err");
+    e.textContent = ""; $("at-tab").innerHTML = "";
+    var ruim = false; sc.forEach(function(x){ if (isNaN(x)) ruim = true; });
+    if (ruim || toks.length !== sc.length || !sc.length || !(dk >= 1)){ e.textContent = "Informe o mesmo número de tokens e de compatibilidades, e d_k ≥ 1."; return; }
+    var esc = sc.map(function(x){ return x/Math.sqrt(dk); });
+    var mx = Math.max.apply(null, esc), ex = esc.map(function(x){ return Math.exp(x-mx); });
+    var soma = ex.reduce(function(a,b){ return a+b; }, 0), h = "", tot = 0, imax = 0, i;
+    for (i=0;i<ex.length;i++) if (ex[i] > ex[imax]) imax = i;
+    for (i=0;i<ex.length;i++){
+      var p = ex[i]/soma; tot += p;
+      h += "<tr" + (i===imax ? ' class="top"' : "") + "><td>" + toks[i].replace(/</g, "&lt;") + '</td><td class="n">' + fmt(sc[i], 2) + '</td><td class="n">' + fmt(esc[i], 3) + '</td><td class="n">' + fmt(p, 3) + "</td></tr>";
+    }
+    h += '<tr><td><strong>Total</strong></td><td></td><td></td><td class="n"><strong>' + fmt(tot, 3) + "</strong></td></tr>";
+    $("at-tab").innerHTML = h;
+  }
+  $("at-go").addEventListener("click", calcAT); calcAT();
+})();
+</script>
+<script src="theme.js" defer></script>
+</body>
+</html>

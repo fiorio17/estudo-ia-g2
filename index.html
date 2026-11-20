@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Material de revisao do G2 de Inteligencia Artificial: guia, laboratorio e simulado sobre algoritmos geneticos, PLN, Transformers, visao computacional e engenharia de prompts.">
+  <title>Mapa de estudo — IA G2</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🧠%3C/text%3E%3C/svg%3E">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html{-webkit-text-size-adjust:100%;}
+    body{margin:0;}
+    img,svg,video{max-width:100%;height:auto;}
+    button,input,select,textarea{font:inherit;color:inherit;}
+    table{border-collapse:collapse;}
+  </style>
+</head>
+<body>
+<style>
+:root{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+  --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+    --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+    --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11131D; --surface:#181B28; --surface-2:#232738;
+  --ink:#E8EAF6; --ink-soft:#9CA1BA; --line:#2E3349; --grid:#1D2031;
+  --accent:#8E9BFF; --accent-soft:#1F2347; --accent-ink:#0E1020;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+:root[data-theme="light"]{
+  --paper:#EEF0F7; --surface:#FBFBFE; --surface-2:#E4E7F2;
+  --ink:#161824; --ink-soft:#585C73; --line:#D0D5E8; --grid:#DFE3F1;
+  --accent:#4338CA; --accent-soft:#E0E0F8; --accent-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(22,24,36,.06), 0 8px 24px -12px rgba(22,24,36,.18);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:16.5px; line-height:1.6;
+  background-image:
+    repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:760px; margin:0 auto; padding:0 20px 80px;}
+
+header{padding:64px 0 28px; border-bottom:2px solid var(--ink); margin-bottom:36px;}
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft); margin:0 0 13px;}
+h1{font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,6vw,3.4rem);
+  line-height:1.04; letter-spacing:-.02em; margin:0 0 15px; text-wrap:balance;}
+h1 em{font-style:italic; color:var(--accent);}
+.lede{font-size:1.08rem; color:var(--ink-soft); margin:0; max-width:56ch;}
+
+.cards{display:grid; gap:14px;}
+a.card{display:block; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--line); border-radius:4px;
+  padding:22px 24px; box-shadow:var(--shadow);
+  transition:border-color .15s, transform .15s;}
+a.card:hover{border-color:var(--accent); transform:translateY(-2px);}
+a.card:focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+@media (prefers-reduced-motion:reduce){ a.card{transition:none;} a.card:hover{transform:none;} }
+
+.card .etapa{font-family:var(--mono); font-size:.68rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:8px;}
+.card h2{font-family:var(--display); font-size:1.42rem; letter-spacing:-.012em; margin:0 0 7px;}
+.card p{margin:0 0 12px; color:var(--ink-soft); font-size:.95rem;}
+.card .meta{font-family:var(--mono); font-size:.74rem; color:var(--ink-soft);
+  display:flex; flex-wrap:wrap; gap:6px 14px;}
+.card .meta b{color:var(--accent); font-weight:700;}
+
+h3{font-family:var(--display); font-size:1.2rem; margin:44px 0 10px; letter-spacing:-.01em;}
+p.txt{margin:0 0 13px; color:var(--ink-soft); font-size:.95rem;}
+p.txt strong{color:var(--ink); font-weight:620;}
+code{font-family:var(--mono); font-size:.87em; background:var(--surface-2); padding:.1em .34em; border-radius:2px;}
+ul{margin:0 0 13px; padding-left:22px; color:var(--ink-soft); font-size:.95rem;}
+li{margin-bottom:6px;}
+li strong{color:var(--ink); font-weight:620;}
+
+.aviso{background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  padding:15px 18px; font-size:.9rem; color:var(--ink-soft); margin:16px 0 0; box-shadow:var(--shadow);}
+.aviso b{font-family:var(--mono); font-size:.67rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:7px;}
+.aviso p{margin:0 0 8px;} .aviso p:last-child{margin:0;}
+
+footer{margin-top:50px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:.85rem; color:var(--ink-soft);}
+footer a{color:var(--accent);}
+</style>
+
+<div class="page">
+
+<header>
+  <p class="eyebrow">Inteligência Artificial · G2 · material de revisão</p>
+  <h1>Mapa de <em>estudo</em>.</h1>
+  <p class="lede">Os conteúdos do G2 em três páginas que funcionam offline, em qualquer navegador: algoritmos genéticos, processamento de linguagem natural (do Bag of Words aos Transformers), visão computacional e engenharia de prompts.</p>
+</header>
+
+<div class="cards">
+
+  <a class="card" href="guia.html">
+    <span class="etapa">Etapa 1 · revisar</span>
+    <h2>Guia completo</h2>
+    <p>Seis aulas condensadas, com as contas feitas passo a passo: fitness, OX/PMX, TF-IDF, cosseno, atenção, Canny, HSV, CNNs, YOLO e as cinco técnicas de prompt. Autoteste com flashcards no fim.</p>
+    <div class="meta"><span>algoritmos genéticos</span><span>PLN</span><span>visão computacional</span><span>prompts</span></div>
+  </a>
+
+  <a class="card" href="laboratorio.html">
+    <span class="etapa">Etapa 2 · praticar</span>
+    <h2>Laboratório</h2>
+    <p>Rode um algoritmo genético de verdade, cruze rotas com OX e PMX, calcule TF-IDF, similaridade de cosseno e pesos de atenção com seus próprios números.</p>
+    <div class="meta"><span><b>5</b> ferramentas</span><span>roda no navegador</span></div>
+  </a>
+
+  <a class="card" href="simulado.html">
+    <span class="etapa">Etapa 3 · medir</span>
+    <h2>Simulado</h2>
+    <p>Questões objetivas dos seis módulos, com correção na hora e a explicação do porquê de cada alternativa, amarrada nos slides.</p>
+    <div class="meta"><span><b>130</b> questões</span><span>6 módulos</span></div>
+  </a>
+
+</div>
+
+<h3>Como usar</h3>
+<p class="txt">Comece pelo <strong>guia</strong> na ordem das aulas; use o <strong>laboratório</strong> para ver o algoritmo genético evoluir e refazer as contas de OX/PMX, TF-IDF, cosseno e atenção; e termine com o <strong>simulado</strong>. As questões refazem as contas dos slides e cobrem também as pegadinhas que os professores costumam destacar (BGR no OpenCV, H de 0 a 179, stopwords como “não”, fitness ≠ resposta, atenção ≠ certeza).</p>
+
+<h3>Rodando local</h3>
+<p class="txt">Páginas HTML sem nenhuma dependência externa — nada de CDN, fonte remota ou build. Basta abrir <code>index.html</code> no navegador, sem internet.</p>
+
+<div class="aviso">
+  <b>Procedência do conteúdo</b>
+  <p>Montado a partir dos decks da disciplina: aula 11 (algoritmos genéticos), aula 12 (introdução a PLN), aula PLN II, aulas 15 e 16 (visão computacional) e aula 17 (engenharia de prompts). Os exemplos numéricos são os dos próprios slides.</p>
+</div>
+
+<footer>
+  <p>Bibliografia: RUSSELL, Stuart J.; NORVIG, Peter. <em>Inteligência Artificial: Uma Abordagem Moderna</em>. Rio de Janeiro: GEN LTC, 2022.</p>
+</footer>
+
+</div>
+<script src="theme.js" defer></script>
+</body>
+</html>
